@@ -22,13 +22,17 @@ public class LocationInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        log.info("[ItemTypeInitializer] 초기화 시작");
+        log.info("[LocationInitializer] 초기화 시작");
 
-        List<Location> locations = Arrays.stream(LocationName.values())
-                .map(typeName -> Location.builder().locationName(typeName).build())
-                .toList();
+        if (locationRepository.count() > 0) {
+            log.info("[Location] 더미 데이터 존재");
+        } else {
+            List<Location> locations = Arrays.stream(LocationName.values())
+                    .map(typeName -> Location.builder().locationName(typeName).build())
+                    .toList();
 
-        locationRepository.saveAll(locations);
-        log.info("[LocationInitializer] 모든 LocationName에 대해 더미 데이터 삽입 완료");
+            locationRepository.saveAll(locations);
+            log.info("[LocationInitializer] 모든 LocationName에 대해 더미 데이터 삽입 완료");
+        }
     }
 }

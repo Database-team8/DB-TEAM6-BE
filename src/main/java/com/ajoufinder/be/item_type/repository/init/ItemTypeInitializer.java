@@ -23,12 +23,16 @@ public class ItemTypeInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         log.info("[ItemTypeInitializer] 초기화 시작");
+        if (itemTypeRepository.count() > 0) {
+            log.info("[ItemType] 더미 데이터 존재");
+        } else {
+            List<ItemType> itemTypes = Arrays.stream(ItemTypeName.values())
+                    .map(typeName -> ItemType.builder().itemType(typeName).build())
+                    .toList();
 
-        List<ItemType> itemTypes = Arrays.stream(ItemTypeName.values())
-                .map(typeName -> ItemType.builder().itemType(typeName).build())
-                .toList();
-
-        itemTypeRepository.saveAll(itemTypes);
-        log.info("[ItemTypeInitializer] 모든 ItemTypeName에 대해 더미 데이터 삽입 완료");
+            itemTypeRepository.saveAll(itemTypes);
+            log.info("[ItemTypeInitializer] 모든 ItemTypeName에 대해 더미 데이터 삽입 완료");
+        }
     }
 }
+
