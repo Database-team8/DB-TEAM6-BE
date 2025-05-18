@@ -40,6 +40,26 @@ dependencies {
     annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
+def generatedMain = 'src/main/generated'
+def generatedTest = 'src/test/generated'
+
+tasks.named('compileJava') {
+    options.generatedSourceOutputDirectory = file(generatedMain)
+}
+
+tasks.named('compileTestJava') {
+    options.generatedSourceOutputDirectory = file(generatedTest)
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += generatedMain
+        }
+    }
+    test {
+        java {
+            srcDirs += generatedTest
+        }
+    }
 }
