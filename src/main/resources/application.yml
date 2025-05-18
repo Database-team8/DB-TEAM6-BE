@@ -2,6 +2,9 @@ spring:
   application:
     name: ajoufinder
 
+  profiles:
+    active: dev
+
   servlet:
     multipart:
       max-file-size: 200MB
@@ -12,7 +15,7 @@ spring:
     open-in-view: false
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: false

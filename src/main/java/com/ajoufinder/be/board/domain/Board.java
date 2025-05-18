@@ -1,10 +1,13 @@
-package com.ajoufinder.be.user.domain;
+package com.ajoufinder.be.board.domain;
 
+import com.ajoufinder.be.item_type.domain.ItemType;
+import com.ajoufinder.be.location.domain.Location;
+import com.ajoufinder.be.user.domain.User;
 import java.time.LocalDateTime;
 
 import com.ajoufinder.be.global.domain.BaseTimeEntity;
-import com.ajoufinder.be.user.domain.constant.Category;
-import com.ajoufinder.be.user.domain.constant.BoardStatus;
+import com.ajoufinder.be.board.domain.constant.Category;
+import com.ajoufinder.be.board.domain.constant.BoardStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,19 +44,19 @@ public class Board extends BaseTimeEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id", nullable = true)
+    @JoinColumn(name = "location_id")
     private Location location;
 
-    @Column(name = "detailed_location", nullable = true, length = 100)
+    @Column(name = "detailed_location", length = 100)
     private String detailedLocation;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "related_date", nullable = true)
+    @Column(name = "related_date")
     private LocalDateTime relatedDate;
 
-    @Column(length = 255, nullable = true)
+    @Column(length = 255)
     private String image;
 
     @Enumerated(EnumType.STRING)

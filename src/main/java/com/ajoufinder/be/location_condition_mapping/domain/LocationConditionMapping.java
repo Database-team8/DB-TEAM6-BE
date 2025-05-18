@@ -1,7 +1,9 @@
-package com.ajoufinder.be.user.domain;
+package com.ajoufinder.be.location_condition_mapping.domain;
 
 
 //import com.ajoufinder.be.global.domain.BaseTimeEntity;
+import com.ajoufinder.be.condition.domain.Condition;
+import com.ajoufinder.be.location.domain.Location;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 //import jakarta.persistence.EnumType;
@@ -33,16 +35,16 @@ public class LocationConditionMapping{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "condition_id", nullable = false)
-    private Condition ConditionId;
+    private Condition condition;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id", nullable = false)
-    private Location locationId;
+    private Location location;
 
 
     @Builder
-    public LocationConditionMapping(Condition conditionId, Location locationId) {
-        this.ConditionId = conditionId;
-        this.locationId = locationId;
+    public LocationConditionMapping(Condition condition, Location location) {
+        this.condition = condition;
+        this.location = location;
     }
 }

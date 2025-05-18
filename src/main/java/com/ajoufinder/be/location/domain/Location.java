@@ -1,7 +1,7 @@
-package com.ajoufinder.be.user.domain;
+package com.ajoufinder.be.location.domain;
 
-//import com.ajoufinder.be.user.domain.constant.BoardStatus;
-import com.ajoufinder.be.user.domain.constant.ItemTypeName;
+//import com.ajoufinder.be.board.domain.constant.BoardStatus;
+import com.ajoufinder.be.location.domain.constant.LocationName;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,22 +22,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "itemtype")
+@Table(name = "location")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ItemType {
+public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "item_id")
+    @Column(name = "location_id")
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "item_type", nullable = false)
-    private ItemTypeName itemType;
+    @Column(name = "location_name", nullable = false)
+    private LocationName locationName;
 
 
     @Builder
-    public ItemType(ItemTypeName itemType) {
-        this.itemType = itemType;
+    public Location(LocationName locationName) {
+        this.locationName = locationName;
     }
 }

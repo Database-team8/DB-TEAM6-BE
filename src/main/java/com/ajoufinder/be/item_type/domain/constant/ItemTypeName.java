@@ -1,4 +1,4 @@
-package com.ajoufinder.be.user.domain.constant;
+package com.ajoufinder.be.item_type.domain.constant;
 
 
 import lombok.Getter;

@@ -1,5 +1,7 @@
-package com.ajoufinder.be.user.domain;
-import com.ajoufinder.be.user.domain.constant.Category;
+package com.ajoufinder.be.condition.domain;
+import com.ajoufinder.be.item_type.domain.ItemType;
+import com.ajoufinder.be.user.domain.User;
+import com.ajoufinder.be.board.domain.constant.Category;
 
 
 //import com.ajoufinder.be.global.domain.BaseTimeEntity;
@@ -22,7 +24,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "condition")
+@Table(name = "conditions")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Condition{
@@ -34,7 +36,7 @@ public class Condition{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_type_id", nullable = false)
-    private ItemType itemTypeId;
+    private ItemType itemType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -46,8 +48,8 @@ public class Condition{
 
 
     @Builder
-    public Condition(ItemType itemTypeId, User user, Category category) {
-        this.itemTypeId = itemTypeId;
+    public Condition(ItemType itemType, User user, Category category) {
+        this.itemType = itemType;
         this.user = user;
         this.category = category;
     }

@@ -1,4 +1,4 @@
-package com.ajoufinder.be.user.domain.constant;
+package com.ajoufinder.be.comment.domain.constant;
 
 
 import lombok.Getter;
@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum Category {
-    LOST,
-    FOUND,
+public enum CommentStatus {
+    VISIBLE,
+    DELETED,
     ;
 }

@@ -1,4 +1,4 @@
-package com.ajoufinder.be.user.domain.constant;
+package com.ajoufinder.be.board.domain.constant;
 
 
 import lombok.Getter;
@@ -6,8 +6,9 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum CommentStatus {
-    VISIBLE,
+public enum BoardStatus {
+    ACTIVE,
+    COMPLETED,
     DELETED,
     ;
 }

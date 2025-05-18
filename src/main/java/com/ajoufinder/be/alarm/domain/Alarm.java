@@ -1,6 +1,7 @@
-package com.ajoufinder.be.user.domain;
+package com.ajoufinder.be.alarm.domain;
 
 import com.ajoufinder.be.global.domain.BaseTimeEntity;
+import com.ajoufinder.be.user.domain.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 //import jakarta.persistence.EnumType;
