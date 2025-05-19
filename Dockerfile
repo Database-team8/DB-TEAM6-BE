@@ -2,6 +2,6 @@ FROM openjdk:17-jdk
 
 WORKDIR /app
 
-COPY build/libs/be-0.0.1-SNAPSHOT.jar app.jar
+COPY build/libs/*-SNAPSHOT.jar app.jar
 
 ENTRYPOINT ["java", "-jar", "/app.jar"]
