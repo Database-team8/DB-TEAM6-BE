@@ -24,6 +24,9 @@ jobs:
       - name: Build JAR
         run: ./gradlew build
 
+      - name: Check build/libs
+        run: ls -al build/libs
+
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
 
@@ -37,6 +40,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/ajoufinder:latest
 
