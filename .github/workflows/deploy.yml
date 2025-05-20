@@ -59,7 +59,7 @@ jobs:
             docker run -d -p 8080:8080 \
               --name ajoufinder \
               -e SPRING_PROFILES_ACTIVE=dev \
-              -e DB_URL_DEV=${{ secrets.DB_URL_DEV }} \
-              -e DB_USERNAME_DEV=${{ secrets.DB_USERNAME_DEV }} \
-              -e DB_PW_DEV=${{ secrets.DB_PW_DEV }} \
+              -e DB_URL_DEV="${{ secrets.DB_URL_DEV }}" \
+              -e DB_USERNAME_DEV="${{ secrets.DB_USERNAME_DEV }}" \
+              -e DB_PW_DEV="${{ secrets.DB_PW_DEV }}" \
               ${{ secrets.DOCKER_USERNAME }}/ajoufinder:latest
