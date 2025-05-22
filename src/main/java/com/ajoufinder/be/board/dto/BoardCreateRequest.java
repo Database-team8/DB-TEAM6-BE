@@ -35,8 +35,8 @@ public record BoardCreateRequest(
     @Schema(description = "이미지 URL", example = "https://cdn.ajoufinder.com/images/wallet.jpg") 
     String image,
 
-    @Schema(description = "상태 (ACTIVE, COMPLETED, DELETED)", example = "ACTIVE") 
-    @NotNull BoardStatus status,
+    //@Schema(description = "상태 (ACTIVE, COMPLETED, DELETED)", example = "ACTIVE") 
+    //NotNull BoardStatus status,
 
     @Schema(description = "게시글의 종류(LOST, FOUND)", example = "LOST") 
     @NotNull Category category,
@@ -56,7 +56,7 @@ public record BoardCreateRequest(
                 .description(this.description())
                 .relatedDate(this.relatedDate())
                 .image(this.image())
-                .status(this.status())
+                .status(BoardStatus.ACTIVE)
                 .category(this.category())
                 .itemType(itemType)
                 .build();

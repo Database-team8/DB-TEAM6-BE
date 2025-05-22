@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,12 +79,20 @@ public class BoardService {
         return board.getId();
     }
 
-    /* 게시글 종류 (분실/습득) 따라 게시글 조회하기 */
-    public List<BoardSimpleResponse> getBoardsByCategory(Category category) {
-        return boardRepository.findByCategory(category).stream()
-                .map(BoardSimpleResponse::from)
-                .collect(Collectors.toList());
+    /* 게시글 종류 (분실/습득) 따라 게시글 조회하기
+     * 페이지 단위로 가져오도록 했습니다. 경로 뒤 인자로 페이지 번호, 사이즈 넣어서 요청합니다.
+    */
+
+    @Transactional(readOnly = true)
+    public Page<BoardSimpleResponse> getBoardsByCategory(Category category, Pageable pageable) {
+        return boardRepository.findByCategoryAndStatus(category, BoardStatus.ACTIVE, pageable)
+                .map(BoardSimpleResponse::from);
     }
+//     public List<BoardSimpleResponse> getBoardsByCategory(Category category) {
+//         return boardRepository.findByCategory(category).stream()
+//                 .map(BoardSimpleResponse::from)
+//                 .collect(Collectors.toList());
+//     }   
 
     /* 특정 게시글의 상세 정보 조회하기 */
     public BoardDetailResponse getBoardDetail(Long boardId) {
@@ -111,21 +121,39 @@ public class BoardService {
         return board.getId();
     }
 
-
+    /* 게시글 필터링 조회하기
+     * 필터링 조회 시에도 페이지 단위로 가져오도록 했습니다.
+    */
     @Transactional(readOnly = true)
-    public List<BoardSimpleResponse> filterBoards(Category category, BoardFilterRequest request) {
-        List<Board> boards = boardRepository.findAllByDynamicFilter(
+    public Page<BoardSimpleResponse> filterBoards(Category category, BoardFilterRequest request, Pageable pageable) {
+        Page<Board> boardPage = boardRepository.findAllByDynamicFilter(
                 category,
                 request.status(),
                 request.itemTypeId(),
                 request.locationId(),
                 request.startDate(),
-                request.endDate()
+                request.endDate(),
+                pageable
         );
 
-        return boards.stream()
-                .map(BoardSimpleResponse::from)
-                .toList();
+        return boardPage.map(BoardSimpleResponse::from);
     }
+        
+
+//     @Transactional(readOnly = true)
+//     public List<BoardSimpleResponse> filterBoards(Category category, BoardFilterRequest request) {
+//         List<Board> boards = boardRepository.findAllByDynamicFilter(
+//                 category,
+//                 request.status(),
+//                 request.itemTypeId(),
+//                 request.locationId(),
+//                 request.startDate(),
+//                 request.endDate()
+//         );
+
+//         return boards.stream()
+//                 .map(BoardSimpleResponse::from)
+//                 .toList();
+//     }
         
 }

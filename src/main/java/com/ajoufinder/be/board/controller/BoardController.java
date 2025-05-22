@@ -12,7 +12,6 @@ import com.ajoufinder.be.board.domain.constant.Category;
 import com.ajoufinder.be.board.dto.BoardCreateRequest;
 import com.ajoufinder.be.board.dto.BoardDetailResponse;
 import com.ajoufinder.be.board.dto.BoardFilterRequest;
-//import com.ajoufinder.be.board.dto.BoardFilterRequest;
 import com.ajoufinder.be.board.dto.BoardSimpleResponse;
 import com.ajoufinder.be.board.dto.BoardUpdateRequest;
 import com.ajoufinder.be.board.service.BoardService;
@@ -20,14 +19,21 @@ import com.ajoufinder.be.global.api_response.ApiResponse;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -82,16 +88,33 @@ public class BoardController {
     }
 
     @Operation(summary = "분실 게시글 목록 조회")
+    // @GetMapping("/lost")
+    // public ApiResponse<List<BoardSimpleResponse>> getLostBoards() {
+    //     return ApiResponse.onSuccess(boardService.getBoardsByCategory(Category.LOST));
+    // }
     @GetMapping("/lost")
-    public ApiResponse<List<BoardSimpleResponse>> getLostBoards() {
-        return ApiResponse.onSuccess(boardService.getBoardsByCategory(Category.LOST));
+    public ResponseEntity<Page<BoardSimpleResponse>> getLostBoards(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BoardSimpleResponse> result = boardService.getBoardsByCategory(Category.LOST, pageable);
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "습득 게시글 목록 조회")
     @GetMapping("/found")
-    public ApiResponse<List<BoardSimpleResponse>> getFoundBoards() {
-        return ApiResponse.onSuccess(boardService.getBoardsByCategory(Category.FOUND));
+    public ResponseEntity<Page<BoardSimpleResponse>> getFoundBoards(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BoardSimpleResponse> result = boardService.getBoardsByCategory(Category.FOUND, pageable);
+        return ResponseEntity.ok(result);
     }
+    // public ApiResponse<List<BoardSimpleResponse>> getFoundBoards() {
+    //     return ApiResponse.onSuccess(boardService.getBoardsByCategory(Category.FOUND));
+    // }
 
     @Operation(summary = "게시글 상세 조회")
     @GetMapping("/{boardId}")
@@ -137,9 +160,15 @@ public class BoardController {
         """
     )
     @GetMapping("/lost/filter")
-    public ApiResponse<List<BoardSimpleResponse>> filterLostBoards(BoardFilterRequest request) {
-        return ApiResponse.onSuccess(boardService.filterBoards(Category.LOST, request));
+    public Page<BoardSimpleResponse> filterLostBoards(
+    @ModelAttribute BoardFilterRequest request,
+    @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return boardService.filterBoards(Category.LOST, request, pageable);
     }
+    // public ApiResponse<List<BoardSimpleResponse>> filterLostBoards(BoardFilterRequest request) {
+    //     return ApiResponse.onSuccess(boardService.filterBoards(Category.LOST, request));
+    // }
 
     @Operation(
         summary = "습득 게시글 필터링 조회",
@@ -157,7 +186,13 @@ public class BoardController {
             - ex3) /boards/found/filter?status=COMPLETED&itemTypeId=2
         """)
     @GetMapping("/found/filter")
-    public ApiResponse<List<BoardSimpleResponse>> filterFoundBoards(BoardFilterRequest request) {
-        return ApiResponse.onSuccess(boardService.filterBoards(Category.FOUND, request));
+    public Page<BoardSimpleResponse> filterFoundBoards(
+    @ModelAttribute BoardFilterRequest request,
+    @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return boardService.filterBoards(Category.FOUND, request, pageable);
     }
+    // public ApiResponse<List<BoardSimpleResponse>> filterFoundBoards(BoardFilterRequest request) {
+    //     return ApiResponse.onSuccess(boardService.filterBoards(Category.FOUND, request));
+    // }
 }
