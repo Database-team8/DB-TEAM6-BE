@@ -6,9 +6,6 @@ spring:
   application:
     name: ajoufinder
 
-  profiles:
-    active: dev
-
   servlet:
     multipart:
       max-file-size: 200MB

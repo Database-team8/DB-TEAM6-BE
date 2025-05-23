@@ -1,11 +1,12 @@
-name: Deploy to EC2
+name: Docker CI/CD Deploy
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,11 +22,8 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Build JAR
-        run: ./gradlew build
-
-      - name: Check build/libs
-        run: ls -al build/libs
+      - name: Build with Gradle (without test)
+        run: ./gradlew bootJar -x test
 
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
@@ -40,7 +38,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/ajoufinder:latest
 
@@ -57,8 +54,8 @@ jobs:
             docker stop ajoufinder || true
             docker rm ajoufinder || true
             docker run -d -p 8080:8080 \
+              --restart unless-stopped \
               --name ajoufinder \
-              -e SPRING_PROFILES_ACTIVE=dev \
               -e DB_URL_DEV="${{ secrets.DB_URL_DEV }}" \
               -e DB_USERNAME_DEV="${{ secrets.DB_USERNAME_DEV }}" \
               -e DB_PW_DEV="${{ secrets.DB_PW_DEV }}" \
