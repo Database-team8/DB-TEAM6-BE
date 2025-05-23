@@ -3,8 +3,6 @@ package com.ajoufinder.be.board.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -98,6 +96,11 @@ public class BoardService {
     public BoardDetailResponse getBoardDetail(Long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("Board not found."));
+
+        if (!board.getStatus().equals(BoardStatus.DELETED)) {
+            throw new RuntimeException("삭제된 게시글은 조회할 수 없습니다.");
+        }
+
         return BoardDetailResponse.from(board);
     }
 

@@ -32,9 +32,7 @@ import com.ajoufinder.be.comment.service.CommentService;
 @RequiredArgsConstructor
 @RequestMapping("/boards/{boardId}/comments")
 public class CommentController {
-    //TODO: 댓글 작성, 대댓글 작성, 댓글 수정, 댓글 삭제, 댓글 조회
     private final CommentService commentService;
-
 
     @Operation(
             summary = "댓글 작성",

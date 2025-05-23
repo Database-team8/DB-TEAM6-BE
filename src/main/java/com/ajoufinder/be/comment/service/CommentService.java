@@ -95,7 +95,9 @@ public class CommentService {
         comment.markAsDeleted();
     }
 
-    /* 한 게시글의 모든 댓글 리스트 조회하기 */
+    /* 한 게시글의 모든 댓글 리스트 조회하기
+     * 현재 컨트롤러에는 이 메서드를 사용하는 부분이 없습니다. 하지만 남겨는 놓았습니다.
+    */
     @Transactional(readOnly = true)
     public List<CommentResponse> getCommentsByBoard(Long boardId) {
         List<Comment> comments = commentRepository.findByBoardIdAndStatus(boardId, CommentStatus.VISIBLE);

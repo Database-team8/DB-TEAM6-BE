@@ -15,13 +15,28 @@ import java.util.stream.Collectors;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Schema(description = "댓글 응답 DTO")
 public record CommentResponse(
+    @Schema(description = "댓글 id", example = "1")
     Long commentId,
+
+    @Schema(description = "부모 댓글 id", example = "1")
     Long parentId,
+
+    @Schema(description = "댓글 내용", example = "이 휴대폰 성호관 편의점에서 맡고 있습니다.")
     String content,
+
+    @Schema(description = "비밀댓글 여부", example = "true")
     Boolean isSecret,
+
+    @Schema(description = "댓글 작성시간", example = "2024-05-01T15:30:00")
     LocalDateTime createdAt,
+
+    @Schema(description = "댓글 수정시간", example = "2024-05-01T15:30:00")
     LocalDateTime updatedAt,
+
+    @Schema(description = "댓글 작성자 요약정보")
     UserSummary user,
+
+    @Schema(description = "대댓글 목록")
     List<CommentResponse> childComments
 ) {
     public static CommentResponse from(Comment comment) {
