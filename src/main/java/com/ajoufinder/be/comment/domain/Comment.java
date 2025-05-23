@@ -5,7 +5,7 @@ import com.ajoufinder.be.global.domain.BaseTimeEntity;
 import com.ajoufinder.be.user.domain.User;
 import com.ajoufinder.be.comment.domain.constant.CommentStatus;
 
-import jakarta.persistence.CascadeType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -78,5 +78,14 @@ public class Comment extends BaseTimeEntity {
         this.content = content;
         this.status = status;
         this.isSecret = isSecret;
+    }
+
+    public void updateContent(String Content, Boolean isSecret) {
+        this.content = Content;
+        this.isSecret = isSecret;
+    }
+
+    public void markAsDeleted() {
+        this.status = CommentStatus.DELETED;
     }
 }

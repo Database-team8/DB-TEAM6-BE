@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 import com.ajoufinder.be.global.domain.BaseTimeEntity;
 import com.ajoufinder.be.board.domain.constant.Category;
+import com.ajoufinder.be.board.dto.BoardUpdateRequest;
 import com.ajoufinder.be.board.domain.constant.BoardStatus;
 
 import jakarta.persistence.Column;
@@ -86,5 +87,21 @@ public class Board extends BaseTimeEntity {
         this.status = status;
         this.category = category;
         this.itemType = itemType;
+    }
+
+    public void update(BoardUpdateRequest request, Location location, ItemType itemType) {
+        this.title = request.title();
+        this.description = request.description();
+        this.detailedLocation = request.detailedLocation();
+        this.image = request.image();
+        this.relatedDate = request.relatedDate();
+        //this.status = request.status();
+        //this.category = request.category();
+        this.location = location;
+        this.itemType = itemType;
+    }
+
+    public void updateStatus(BoardStatus newStatus) {
+        this.status = newStatus;
     }
 }
