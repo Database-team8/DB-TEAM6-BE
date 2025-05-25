@@ -1,10 +1,13 @@
 package com.ajoufinder.be.user.controller;
 
 import com.ajoufinder.be.global.api_response.ApiResponse;
+import com.ajoufinder.be.user.dto.UserLoginRequest;
 import com.ajoufinder.be.user.dto.UserSignUpRequest;
+import com.ajoufinder.be.user.service.AuthService;
 import com.ajoufinder.be.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
+    private final AuthService authService;
 
     @Operation(
             summary = "회원가입",
@@ -37,5 +41,11 @@ public class UserController {
     public ApiResponse<Long> signUp(@Valid @RequestBody UserSignUpRequest request) {
         Long userId = userService.signUp(request);
         return ApiResponse.onSuccess(userId);
+    }
+
+    @PostMapping("/login")
+    public ApiResponse<String> login(@RequestBody UserLoginRequest request, HttpServletRequest requestRaw) {
+        authService.login(request, requestRaw);
+        return ApiResponse.onSuccess("로그인 성공");
     }
 }
