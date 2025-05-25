@@ -5,7 +5,7 @@ import com.ajoufinder.be.board.domain.constant.Category;
 import com.ajoufinder.be.board.domain.constant.BoardStatus;
 import com.ajoufinder.be.item_type.dto.ItemTypeSummary;
 import com.ajoufinder.be.location.dto.LocationSummary;
-import com.ajoufinder.be.user.dto.UserSummary;
+import com.ajoufinder.be.user.dto.response.UserResponse;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -21,7 +21,7 @@ public record BoardDetailResponse(
     String description,
     String image,
     String detailedLocation,
-    UserSummary user,
+    UserResponse user,
     BoardStatus status,
     Category category,
     ItemTypeSummary itemType,
@@ -36,7 +36,7 @@ public record BoardDetailResponse(
             board.getDescription(),
             board.getImage(),
             board.getDetailedLocation(),
-            UserSummary.from(board.getUser()),
+            UserResponse.from(board.getUser()),
             board.getStatus(),
             board.getCategory(),
             ItemTypeSummary.from(board.getItemType()),
