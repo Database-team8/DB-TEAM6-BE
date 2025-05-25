@@ -30,7 +30,11 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword(); // 암호화된 비밀번호
+        return user.getPassword();
+    }
+
+    public Long getId() {
+        return user.getId();
     }
 
     @Override public boolean isAccountNonExpired() { return true; }

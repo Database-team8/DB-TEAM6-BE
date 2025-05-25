@@ -1,6 +1,6 @@
 package com.ajoufinder.be.user.service;
 
-import com.ajoufinder.be.user.dto.UserLoginRequest;
+import com.ajoufinder.be.user.dto.request.UserLoginRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;

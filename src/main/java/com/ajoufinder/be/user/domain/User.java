@@ -2,6 +2,7 @@ package com.ajoufinder.be.user.domain;
 
 import com.ajoufinder.be.global.domain.BaseTimeEntity;
 import com.ajoufinder.be.user.domain.constant.Role;
+import com.ajoufinder.be.user.dto.request.UserUpdateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -63,5 +64,13 @@ public class User extends BaseTimeEntity {
         this.profileImage = profileImage;
         this.phoneNumber = phoneNumber;
         this.role = role;
+    }
+
+    public void updateProfile(UserUpdateRequest request) {
+        this.name = request.name();
+        this.nickname = request.nickname();
+        this.phoneNumber = request.phoneNumber();
+        this.description = request.description();
+        this.profileImage = request.profileImage();
     }
 }

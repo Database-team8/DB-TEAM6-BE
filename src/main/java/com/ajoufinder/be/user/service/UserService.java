@@ -1,7 +1,10 @@
 package com.ajoufinder.be.user.service;
 
+import com.ajoufinder.be.global.api_response.exception.GeneralException;
+import com.ajoufinder.be.global.api_response.status.ErrorStatus;
 import com.ajoufinder.be.user.domain.User;
-import com.ajoufinder.be.user.dto.UserSignUpRequest;
+import com.ajoufinder.be.user.dto.request.UserSignUpRequest;
+import com.ajoufinder.be.user.dto.request.UserUpdateRequest;
 import com.ajoufinder.be.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,5 +37,13 @@ public class UserService {
         if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("이미 등록된 이메일입니다.");
         }
+    }
+
+    @Transactional
+    public void updateProfile(Long userId, UserUpdateRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND));
+        user.updateProfile(request);
+        userRepository.save(user);
     }
 }
