@@ -1,6 +1,6 @@
 package com.ajoufinder.be.global.service;
 
-import com.ajoufinder.be.global.domain.CustomUserDetails;
+import com.ajoufinder.be.global.domain.UserPrincipal;
 import com.ajoufinder.be.user.domain.User;
 import com.ajoufinder.be.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
+        User user= userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-        return new CustomUserDetails(user); // UserDetails 구현체
+        return UserPrincipal.from(user);
     }
 }

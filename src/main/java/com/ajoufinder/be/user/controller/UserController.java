@@ -1,18 +1,18 @@
 package com.ajoufinder.be.user.controller;
 
 import com.ajoufinder.be.global.api_response.ApiResponse;
-import com.ajoufinder.be.user.dto.request.UserLoginRequest;
+import com.ajoufinder.be.global.domain.UserPrincipal;
 import com.ajoufinder.be.user.dto.request.UserSignUpRequest;
 import com.ajoufinder.be.user.dto.request.UserUpdateRequest;
-import com.ajoufinder.be.user.service.AuthService;
+import com.ajoufinder.be.user.dto.response.UserInfoResponse;
 import com.ajoufinder.be.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
-    private final AuthService authService;
 
     @Operation(
             summary = "회원가입",
@@ -47,16 +46,6 @@ public class UserController {
     }
 
     @Operation(
-            summary = "로그인",
-            description = "이메일과 비밀번호로 로그인합니다."
-    )
-    @PostMapping("/login")
-    public ApiResponse<String> login(@RequestBody UserLoginRequest request, HttpServletRequest requestRaw) {
-        authService.login(request, requestRaw);
-        return ApiResponse.onSuccess("로그인 성공");
-    }
-
-    @Operation(
             summary = "내 계정 정보 수정",
             description = """
     사용자 본인의 계정 정보를 수정합니다.
@@ -66,9 +55,21 @@ public class UserController {
     @PutMapping("/profile")
     public ApiResponse<String> updateUserInfo(
             @Valid @RequestBody UserUpdateRequest request,
-            @AuthenticationPrincipal(expression = "user.id") Long userId) {
+            @AuthenticationPrincipal UserPrincipal principal) {
 
-        userService.updateProfile(userId, request);
+        userService.updateProfile(principal.getUser(), request);
         return ApiResponse.onSuccess("사용자 정보가 성공적으로 수정되었습니다.");
     }
+
+    @Operation(
+            summary = "내 정보 조회",
+            description = "로그인한 사용자의 프로필 정보를 조회합니다."
+    )
+    @GetMapping("/profile")
+    public ApiResponse<UserInfoResponse> getMyProfile(
+            @AuthenticationPrincipal UserPrincipal principal) {
+        UserInfoResponse response = userService.getUserProfile(principal.getUser());
+        return ApiResponse.onSuccess(response);
+    }
+
 }

@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "로그인 요청 DTO")
 public record UserLoginRequest(
 
-        @Schema(description = "아주대학교 이메일", example = "user@ajou.ac.kr")
+        @Schema(description = "아주대학교 이메일", example = "ina@ajou.ac.kr")
         String email,
 
         @Schema(description = "비밀번호", example = "securePassword123!")
