@@ -25,7 +25,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Swagger로 테스트하려면 disable 필요
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/signup", "auth/login", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                        .requestMatchers("user/signup", "auth/login", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
