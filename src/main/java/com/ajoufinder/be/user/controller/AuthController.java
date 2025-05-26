@@ -5,6 +5,7 @@ import com.ajoufinder.be.user.dto.request.UserLoginRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -67,7 +68,17 @@ public class AuthController {
     )
     @PostMapping("/logout")
     public ApiResponse<String> logout(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        request.logout(); // 세션 종료
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();  // 서버 세션 제거
+        }
+
+        // 클라이언트 측 JSESSIONID 쿠키 무효화
+        Cookie cookie = new Cookie("JSESSIONID", null);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
         return ApiResponse.onSuccess("로그아웃 성공");
     }
 }
