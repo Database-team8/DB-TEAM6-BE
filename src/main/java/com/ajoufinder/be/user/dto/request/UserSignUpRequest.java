@@ -1,4 +1,4 @@
-package com.ajoufinder.be.user.dto;
+package com.ajoufinder.be.user.dto.request;
 
 import com.ajoufinder.be.user.domain.User;
 import com.ajoufinder.be.user.domain.constant.Role;

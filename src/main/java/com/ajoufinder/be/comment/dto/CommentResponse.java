@@ -2,7 +2,7 @@ package com.ajoufinder.be.comment.dto;
 
 import com.ajoufinder.be.comment.domain.Comment;
 import com.ajoufinder.be.comment.domain.constant.CommentStatus;
-import com.ajoufinder.be.user.dto.UserSummary;
+import com.ajoufinder.be.user.dto.response.UserResponse;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -21,7 +21,7 @@ public record CommentResponse(
     Boolean isSecret,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
-    UserSummary user,
+    UserResponse user,
     List<CommentResponse> childComments
 ) {
     public static CommentResponse from(Comment comment) {
@@ -32,7 +32,7 @@ public record CommentResponse(
             comment.getIsSecret(),
             comment.getCreatedAt(),
             comment.getUpdatedAt(),
-            UserSummary.from(comment.getUser()),
+            UserResponse.from(comment.getUser()),
             comment.getChildComments().stream()
                 .filter(child -> child.getStatus() == CommentStatus.VISIBLE)
                 .map(CommentResponse::from)

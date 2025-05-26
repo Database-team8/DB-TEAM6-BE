@@ -53,6 +53,7 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/ajoufinder:latest
             docker stop ajoufinder || true
             docker rm ajoufinder || true
+            docker image prune -af
             docker run -d -p 8080:8080 \
               --restart unless-stopped \
               --name ajoufinder \
