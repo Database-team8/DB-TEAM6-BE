@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 import com.ajoufinder.be.global.domain.BaseTimeEntity;
 import com.ajoufinder.be.board.domain.constant.Category;
-import com.ajoufinder.be.board.dto.BoardUpdateRequest;
+import com.ajoufinder.be.board.dto.Request.BoardUpdateRequest;
 import com.ajoufinder.be.board.domain.constant.BoardStatus;
 
 import jakarta.persistence.Column;

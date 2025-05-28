@@ -4,8 +4,6 @@ import com.ajoufinder.be.global.domain.BaseTimeEntity;
 import com.ajoufinder.be.user.domain.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-//import jakarta.persistence.EnumType;
-//import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,6 +34,10 @@ public class Alarm extends BaseTimeEntity {
     @Column(nullable = false, length = 500)
     private String content;
 
+    /* 새로운 컬럼 */
+    @Column(name = "related_content", nullable = true, length = 255)
+    private String relatedContent;
+
     @Column(name = "related_url", nullable = false, length = 500)
     private String relatedUrl;
 
@@ -44,10 +46,15 @@ public class Alarm extends BaseTimeEntity {
 
 
     @Builder
-    public Alarm(User user, String content, String relatedUrl, Boolean isRead) {
+    public Alarm(User user, String content, String relatedContent, String relatedUrl, Boolean isRead) {
         this.user = user;
         this.content = content;
+        this.relatedContent = relatedContent; //새로운 컬럼
         this.relatedUrl = relatedUrl;
         this.isRead = isRead;
+    }
+
+    public void markAsRead() {
+        this.isRead = true;
     }
 }

@@ -1,4 +1,4 @@
-package com.ajoufinder.be.board.dto;
+package com.ajoufinder.be.board.dto.Response;
 
 import com.ajoufinder.be.board.domain.Board;
 import com.ajoufinder.be.board.domain.constant.BoardStatus;

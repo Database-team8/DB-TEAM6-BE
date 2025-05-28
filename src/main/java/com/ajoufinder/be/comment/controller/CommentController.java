@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,21 +21,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ajoufinder.be.comment.dto.CommentCreateRequest;
-import com.ajoufinder.be.comment.dto.CommentCreateResponse;
-import com.ajoufinder.be.comment.dto.CommentResponse;
-import com.ajoufinder.be.comment.dto.CommentUpdateRequest;
+import com.ajoufinder.be.comment.dto.Request.CommentCreateRequest;
+import com.ajoufinder.be.comment.dto.Request.CommentUpdateRequest;
+import com.ajoufinder.be.comment.dto.Response.CommentCreateResponse;
+import com.ajoufinder.be.comment.dto.Response.CommentResponse;
 import com.ajoufinder.be.comment.service.CommentService;
+import com.ajoufinder.be.global.domain.UserPrincipal;
 
 @Tag(name = "Comment", description = "댓글 관련 API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/boards/{boardId}/comments")
+@RequestMapping("/comments/{boardId}")
 public class CommentController {
-    //TODO: 댓글 작성, 대댓글 작성, 댓글 수정, 댓글 삭제, 댓글 조회
     private final CommentService commentService;
-
 
     @Operation(
             summary = "댓글 작성",
@@ -48,13 +48,15 @@ public class CommentController {
     )
     @PostMapping
     public ResponseEntity<CommentCreateResponse> createComment(
+        @AuthenticationPrincipal UserPrincipal principal,
         @PathVariable("boardId") Long boardId,
         @RequestBody CommentCreateRequest request
     ) {
-        CommentCreateResponse response = commentService.createComment(boardId, request);
+        CommentCreateResponse response = commentService.createComment(principal.getUser(), boardId, request);
         return ResponseEntity.ok(response);
     }
 
+    
     @Operation(
             summary = "댓글 수정",
             description = """
@@ -66,12 +68,14 @@ public class CommentController {
     )
     @PatchMapping("/{commentId}")
     public ResponseEntity<CommentCreateResponse> updateComment(
+        @AuthenticationPrincipal UserPrincipal principal,
         @PathVariable("boardId") Long boardId,
         @PathVariable("commentId") Long commentId,
         @RequestBody CommentUpdateRequest request
     ) {
-        return ResponseEntity.ok(commentService.updateComment(boardId, commentId, request));
+        return ResponseEntity.ok(commentService.updateComment(principal.getUser(), boardId, commentId, request));
     }
+
 
     @Operation(
             summary = "댓글 삭제",
@@ -79,10 +83,11 @@ public class CommentController {
     )
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(
+        @AuthenticationPrincipal UserPrincipal principal,
         @PathVariable("boardId") Long boardId,
         @PathVariable("commentId") Long commentId
     ) {
-        commentService.deleteComment(boardId, commentId);
+        commentService.deleteComment(principal.getUser(), boardId, commentId);
         return ResponseEntity.noContent().build();
     }
 
