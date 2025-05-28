@@ -25,7 +25,7 @@ public record BoardCreateRequest(
 
     @Schema(description = "상세 위치", example = "중앙도서관 3층 열람실")
     String detailedLocation,
-
+    
     @Schema(description = "설명", example = "갈색 지갑이고, 안에 학생증이 들어있어요.")
     @NotBlank String description,
 

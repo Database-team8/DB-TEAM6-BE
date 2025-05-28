@@ -5,7 +5,7 @@ import com.ajoufinder.be.board.domain.constant.Category;
 import com.ajoufinder.be.board.domain.constant.BoardStatus;
 import com.ajoufinder.be.item_type.dto.ItemTypeSummary;
 import com.ajoufinder.be.location.dto.LocationSummary;
-import com.ajoufinder.be.user.dto.UserSummary;
+import com.ajoufinder.be.user.dto.response.UserResponse;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -32,7 +32,7 @@ public record BoardDetailResponse(
     String detailedLocation,
 
     @Schema(description = "게시글 작성자 요약정보. 사용자 ID, 이름, 닉네임, 프로필 이미지 url이 포함됨")
-    UserSummary user,
+    UserResponse user,
 
     @Schema(description = "게시글의 상태", example = "ACTIVE/COMPLETED")
     BoardStatus status,
@@ -59,7 +59,7 @@ public record BoardDetailResponse(
             board.getDescription(),
             board.getImage(),
             board.getDetailedLocation(),
-            UserSummary.from(board.getUser()),
+            UserResponse.from(board.getUser()),
             board.getStatus(),
             board.getCategory(),
             ItemTypeSummary.from(board.getItemType()),

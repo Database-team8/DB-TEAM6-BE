@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -118,5 +119,15 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
         );
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Object> handleBadCredentials(BadCredentialsException e, WebRequest request) {
+        log.warn("로그인 실패 - 잘못된 자격 증명: {}", e.getMessage());
 
+        return handleExceptionInternalFalse(
+                e,
+                ErrorStatus.UNAUTHORIZED.getHttpStatus(), // or HttpStatus.UNAUTHORIZED
+                request,
+                "이메일 또는 비밀번호가 일치하지 않습니다."
+        );
+    }
 }

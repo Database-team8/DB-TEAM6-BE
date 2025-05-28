@@ -1,7 +1,9 @@
 package com.ajoufinder.be.user.service;
 
 import com.ajoufinder.be.user.domain.User;
-import com.ajoufinder.be.user.dto.UserSignUpRequest;
+import com.ajoufinder.be.user.dto.request.UserSignUpRequest;
+import com.ajoufinder.be.user.dto.request.UserUpdateRequest;
+import com.ajoufinder.be.user.dto.response.UserInfoResponse;
 import com.ajoufinder.be.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,4 +37,15 @@ public class UserService {
             throw new IllegalArgumentException("이미 등록된 이메일입니다.");
         }
     }
+
+    @Transactional
+    public void updateProfile(User user, UserUpdateRequest request) {
+        user.updateProfile(request);
+        userRepository.save(user);
+    }
+
+    public UserInfoResponse getUserProfile(User user) {
+        return UserInfoResponse.from(user);
+    }
 }
+

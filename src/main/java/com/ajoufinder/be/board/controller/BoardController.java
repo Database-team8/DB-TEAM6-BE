@@ -17,7 +17,6 @@ import com.ajoufinder.be.board.dto.BoardUpdateRequest;
 import com.ajoufinder.be.board.service.BoardService;
 import com.ajoufinder.be.global.api_response.ApiResponse;
 
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

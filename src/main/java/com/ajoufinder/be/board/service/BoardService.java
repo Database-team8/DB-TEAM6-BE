@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ajoufinder.be.alarm.repository.AlarmRepository;
+import com.ajoufinder.be.alarm.service.AlarmService;
 import com.ajoufinder.be.board.domain.Board;
 import com.ajoufinder.be.board.domain.constant.BoardStatus;
 import com.ajoufinder.be.board.domain.constant.Category;
@@ -36,6 +38,7 @@ public class BoardService {
     private final UserRepository userRepository;
     private final ItemTypeRepository itemTypeRepository;
     private final LocationRepository locationRepository;
+    //private final AlarmService alarmService; 알림 기능 구현 시 쓸 것.
 
     /* 게시글 생성 메서드 */
     @Transactional
@@ -54,6 +57,11 @@ public class BoardService {
 
         Board board = request.toEntity(user, itemType, location);
         boardRepository.save(board);
+
+        /* alarmService.notify(user, "조건에 맞는 게시글이 생성됨", board.getTitle(), "board/"+board.getId());
+        * 알림 생성 예시 코드입니다. 위 코드를 수행하기 전, 작성된 게시글에 따른 알림 대상을 뽑고,
+        * 그 유저에 대해 알림을 추가하면 됩니다. 댓글 생성에서도 동일함.
+        */
         return board.getId();
     }
 

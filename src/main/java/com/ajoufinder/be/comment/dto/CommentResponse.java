@@ -2,7 +2,7 @@ package com.ajoufinder.be.comment.dto;
 
 import com.ajoufinder.be.comment.domain.Comment;
 import com.ajoufinder.be.comment.domain.constant.CommentStatus;
-import com.ajoufinder.be.user.dto.UserSummary;
+import com.ajoufinder.be.user.dto.response.UserResponse;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -34,7 +34,7 @@ public record CommentResponse(
     LocalDateTime updatedAt,
 
     @Schema(description = "댓글 작성자 요약정보")
-    UserSummary user,
+    UserResponse user,
 
     @Schema(description = "대댓글 목록")
     List<CommentResponse> childComments
@@ -47,7 +47,7 @@ public record CommentResponse(
             comment.getIsSecret(),
             comment.getCreatedAt(),
             comment.getUpdatedAt(),
-            UserSummary.from(comment.getUser()),
+            UserResponse.from(comment.getUser()),
             comment.getChildComments().stream()
                 .filter(child -> child.getStatus() == CommentStatus.VISIBLE)
                 .map(CommentResponse::from)
