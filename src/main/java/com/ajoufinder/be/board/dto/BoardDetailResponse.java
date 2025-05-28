@@ -4,7 +4,7 @@ import com.ajoufinder.be.board.domain.Board;
 import com.ajoufinder.be.board.domain.constant.Category;
 import com.ajoufinder.be.board.domain.constant.BoardStatus;
 import com.ajoufinder.be.item_type.dto.ItemTypeSummary;
-import com.ajoufinder.be.location.dto.LocationSummary;
+import com.ajoufinder.be.location.dto.response.LocationResponse;
 import com.ajoufinder.be.user.dto.response.UserResponse;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -25,7 +25,7 @@ public record BoardDetailResponse(
     BoardStatus status,
     Category category,
     ItemTypeSummary itemType,
-    LocationSummary location,
+    LocationResponse location,
     LocalDateTime createdAt,
     LocalDateTime updatedAt
 ) {
@@ -40,7 +40,7 @@ public record BoardDetailResponse(
             board.getStatus(),
             board.getCategory(),
             ItemTypeSummary.from(board.getItemType()),
-            LocationSummary.from(board.getLocation()),
+            LocationResponse.from(board.getLocation()),
             board.getCreatedAt(),
             board.getUpdatedAt()
         );
