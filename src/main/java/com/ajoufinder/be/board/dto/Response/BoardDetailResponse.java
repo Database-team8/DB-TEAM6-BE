@@ -3,8 +3,8 @@ package com.ajoufinder.be.board.dto.Response;
 import com.ajoufinder.be.board.domain.Board;
 import com.ajoufinder.be.board.domain.constant.Category;
 import com.ajoufinder.be.board.domain.constant.BoardStatus;
-import com.ajoufinder.be.item_type.dto.ItemTypeSummary;
-import com.ajoufinder.be.location.dto.LocationSummary;
+import com.ajoufinder.be.item_type.dto.response.ItemTypeResponse;
+import com.ajoufinder.be.location.dto.response.LocationResponse;
 import com.ajoufinder.be.user.dto.response.UserResponse;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -41,10 +41,10 @@ public record BoardDetailResponse(
     Category category,
 
     @Schema(description = "분실물의 종류 정보. 종류의 id와 이름이 포함됨.")
-    ItemTypeSummary itemType,
+    ItemTypeResponse itemType,
 
     @Schema(description = "분실/습득 위치 정보. 위치의 id와 이름이 포함됨.")
-    LocationSummary location,
+    LocationResponse location,
 
     @Schema(description = "게시글 생성 시간", example = "2024-05-01T15:30:00")
     LocalDateTime createdAt,
@@ -62,8 +62,8 @@ public record BoardDetailResponse(
             UserResponse.from(board.getUser()),
             board.getStatus(),
             board.getCategory(),
-            ItemTypeSummary.from(board.getItemType()),
-            LocationSummary.from(board.getLocation()),
+            ItemTypeResponse.from(board.getItemType()),
+            LocationResponse.from(board.getLocation()),
             board.getCreatedAt(),
             board.getUpdatedAt()
         );

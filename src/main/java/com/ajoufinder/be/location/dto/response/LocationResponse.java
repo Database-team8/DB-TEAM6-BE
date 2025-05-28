@@ -1,14 +1,14 @@
-package com.ajoufinder.be.location.dto;
+package com.ajoufinder.be.location.dto.response;
 
 import com.ajoufinder.be.location.domain.Location;
 import com.ajoufinder.be.location.domain.constant.LocationName;
 
-public record LocationSummary(
+public record LocationResponse(
     Long locationId,
     LocationName locationName
 ) {
-    public static LocationSummary from(Location location) {
-        return new LocationSummary(
+    public static LocationResponse from(Location location) {
+        return new LocationResponse(
             location.getId(),
             location.getLocationName()
         );
