@@ -2,6 +2,7 @@ package com.ajoufinder.be.user.controller;
 
 import com.ajoufinder.be.global.api_response.ApiResponse;
 import com.ajoufinder.be.global.domain.UserPrincipal;
+import com.ajoufinder.be.user.dto.request.ChangePasswordRequest;
 import com.ajoufinder.be.user.dto.request.UserSignUpRequest;
 import com.ajoufinder.be.user.dto.request.UserUpdateRequest;
 import com.ajoufinder.be.user.dto.response.UserInfoResponse;
@@ -70,6 +71,22 @@ public class UserController {
             @AuthenticationPrincipal UserPrincipal principal) {
         UserInfoResponse response = userService.getUserProfile(principal.getUser());
         return ApiResponse.onSuccess(response);
+    }
+
+    @Operation(
+            summary = "비밀번호 변경",
+            description = """
+    현재 비밀번호를 확인한 후 새 비밀번호로 변경합니다.
+    - currentPassword: 현재 비밀번호(현재 비밀번호 아니면 IllegalArgumentException이 반환됩니다.)
+    - newPassword: 새 비밀번호
+    """)
+    @PutMapping("/password")
+    public ApiResponse<String> changePassword(
+            @Valid @RequestBody ChangePasswordRequest request,
+            @AuthenticationPrincipal UserPrincipal principal) {
+
+        userService.changePassword(principal.getUser(), request);
+        return ApiResponse.onSuccess("비밀번호가 성공적으로 변경되었습니다.");
     }
 
 }

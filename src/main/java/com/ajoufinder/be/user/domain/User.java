@@ -73,4 +73,8 @@ public class User extends BaseTimeEntity {
         this.description = request.description();
         this.profileImage = request.profileImage();
     }
+
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }
