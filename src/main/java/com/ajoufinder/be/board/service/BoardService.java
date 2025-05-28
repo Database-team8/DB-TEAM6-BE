@@ -3,22 +3,22 @@ package com.ajoufinder.be.board.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ajoufinder.be.alarm.repository.AlarmRepository;
+import com.ajoufinder.be.alarm.service.AlarmService;
 import com.ajoufinder.be.board.domain.Board;
 import com.ajoufinder.be.board.domain.constant.BoardStatus;
 import com.ajoufinder.be.board.domain.constant.Category;
-import com.ajoufinder.be.board.dto.BoardCreateRequest;
-import com.ajoufinder.be.board.dto.BoardDetailResponse;
-import com.ajoufinder.be.board.dto.BoardFilterRequest;
-import com.ajoufinder.be.board.dto.BoardSimpleResponse;
-import com.ajoufinder.be.board.dto.BoardUpdateRequest;
+import com.ajoufinder.be.board.dto.Request.BoardCreateRequest;
+import com.ajoufinder.be.board.dto.Request.BoardFilterRequest;
+import com.ajoufinder.be.board.dto.Request.BoardUpdateRequest;
+import com.ajoufinder.be.board.dto.Response.BoardDetailResponse;
+import com.ajoufinder.be.board.dto.Response.BoardSimpleResponse;
 import com.ajoufinder.be.board.repository.BoardRepository;
 import com.ajoufinder.be.item_type.domain.ItemType;
 import com.ajoufinder.be.item_type.repository.ItemTypeRepository;
@@ -38,11 +38,12 @@ public class BoardService {
     private final UserRepository userRepository;
     private final ItemTypeRepository itemTypeRepository;
     private final LocationRepository locationRepository;
+    //private final AlarmService alarmService; 알림 기능 구현 시 쓸 것.
 
     /* 게시글 생성 메서드 */
     @Transactional
-    public Long createBoard(BoardCreateRequest request) {
-        User user = userRepository.findById(request.userId())
+    public Long createBoard(User loginUser, BoardCreateRequest request) {
+        User user = userRepository.findById(loginUser.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         ItemType itemType = itemTypeRepository.findById(request.itemTypeId())
@@ -56,6 +57,11 @@ public class BoardService {
 
         Board board = request.toEntity(user, itemType, location);
         boardRepository.save(board);
+
+        /* alarmService.notify(user, "조건에 맞는 게시글이 생성됨", board.getTitle(), "board/"+board.getId());
+        * 알림 생성 예시 코드입니다. 위 코드를 수행하기 전, 작성된 게시글에 따른 알림 대상을 뽑고,
+        * 그 유저에 대해 알림을 추가하면 됩니다. 댓글 생성에서도 동일함.
+        */
         return board.getId();
     }
 
@@ -65,15 +71,19 @@ public class BoardService {
      * 프론트단에서 게시글을 수정하려는 사용자는 게시글 작성자라는 것을 보장해야 함.
      */
     @Transactional
-    public Long updateBoard(Long boardId, BoardUpdateRequest request) {
+    public Long updateBoard(User loginUser, Long boardId, BoardUpdateRequest request) {
         Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("Board not found"));
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+
+        if(!board.getUser().equals(loginUser)){
+            throw new RuntimeException("게시글 수정은 게시글의 작성자만 할 수 있습니다.");
+        }
 
         Location location = locationRepository.findById(request.locationId())
-                .orElseThrow(() -> new IllegalArgumentException("Location not found."));
+                .orElseThrow(() -> new IllegalArgumentException("위치 정보를 찾을 수 없습니다."));
 
         ItemType itemType = itemTypeRepository.findById(request.itemTypeId())
-                .orElseThrow(() -> new IllegalArgumentException("ItemType not found."));
+                .orElseThrow(() -> new IllegalArgumentException("물건 종류를 찾을 수 없습니다."));
 
         board.update(request, location, itemType);
         return board.getId();
@@ -98,24 +108,37 @@ public class BoardService {
     public BoardDetailResponse getBoardDetail(Long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("Board not found."));
+
+        if (!board.getStatus().equals(BoardStatus.DELETED)) {
+            throw new RuntimeException("삭제된 게시글은 조회할 수 없습니다.");
+        }
+
         return BoardDetailResponse.from(board);
     }
 
     /* 게시글 상태 (ACTIVE, COMPLETED) 변경하기 */
     @Transactional
-    public Long updateBoardStatus(Long boardId, BoardStatus newStatus) {
+    public Long updateBoardStatus(User loginUser, Long boardId, BoardStatus newStatus) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다: id=" + boardId));
 
-        board.updateStatus(newStatus); // 엔티티 내 메서드로 깔끔하게 처리
+        if (!loginUser.getId().equals(board.getUser().getId())) {
+            throw new RuntimeException("게시글 작성자만 게시글 상태를 변경할 수 있습니다.");
+        }
+
+        board.updateStatus(newStatus);
         return board.getId();
     }
 
     /* 게시글 삭제하기 (status를 DELETED로 변경) */
     @Transactional
-    public Long deleteBoard(Long boardId) {
+    public Long deleteBoard(User loginUser, Long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다: id=" + boardId));
+
+        if (!loginUser.getId().equals(board.getUser().getId())) {
+            throw new RuntimeException("게시글 작성자만 게시글을 삭제할 수 있습니다.");
+        }
 
         board.updateStatus(BoardStatus.DELETED);
         return board.getId();

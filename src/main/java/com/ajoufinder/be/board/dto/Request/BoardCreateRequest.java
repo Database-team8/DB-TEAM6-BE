@@ -1,4 +1,4 @@
-package com.ajoufinder.be.board.dto;
+package com.ajoufinder.be.board.dto.Request;
 
 import com.ajoufinder.be.board.domain.Board;
 import com.ajoufinder.be.board.domain.constant.Category;
@@ -17,15 +17,15 @@ import java.time.LocalDateTime;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Schema(description = "게시글 생성 요청 DTO")
 public record BoardCreateRequest(
-    @Schema(description = "작성자 id", example = "1")
-    @NotNull Long userId,
+    //@Schema(description = "작성자 id", example = "1")
+    //@NotNull Long userId,
 
     @Schema(description = "제목", example = "지갑을 잃어버렸어요") 
     @NotBlank String title,
 
     @Schema(description = "상세 위치", example = "중앙도서관 3층 열람실")
     String detailedLocation,
-
+    
     @Schema(description = "설명", example = "갈색 지갑이고, 안에 학생증이 들어있어요.")
     @NotBlank String description,
 
@@ -47,10 +47,10 @@ public record BoardCreateRequest(
     @Schema(description = "위치 ID", example = "3")
     @NotNull Long locationId
 ) {
-    public Board toEntity(User userId, ItemType itemType, Location location) {
+    public Board toEntity(User user, ItemType itemType, Location location) {
         return Board.builder()
                 .title(this.title())
-                .user(userId)
+                .user(user)
                 .location(location)
                 .detailedLocation(this.detailedLocation())
                 .description(this.description())

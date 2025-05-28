@@ -1,4 +1,4 @@
-package com.ajoufinder.be.board.dto;
+package com.ajoufinder.be.board.dto.Request;
 
 //import com.ajoufinder.be.board.domain.constant.Category;
 //import com.ajoufinder.be.board.domain.constant.BoardStatus;

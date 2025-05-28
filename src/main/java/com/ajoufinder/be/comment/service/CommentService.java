@@ -4,10 +4,10 @@ import com.ajoufinder.be.board.domain.Board;
 import com.ajoufinder.be.board.repository.BoardRepository;
 import com.ajoufinder.be.comment.domain.Comment;
 import com.ajoufinder.be.comment.domain.constant.CommentStatus;
-import com.ajoufinder.be.comment.dto.CommentCreateRequest;
-import com.ajoufinder.be.comment.dto.CommentCreateResponse;
-import com.ajoufinder.be.comment.dto.CommentResponse;
-import com.ajoufinder.be.comment.dto.CommentUpdateRequest;
+import com.ajoufinder.be.comment.dto.Request.CommentCreateRequest;
+import com.ajoufinder.be.comment.dto.Request.CommentUpdateRequest;
+import com.ajoufinder.be.comment.dto.Response.CommentCreateResponse;
+import com.ajoufinder.be.comment.dto.Response.CommentResponse;
 import com.ajoufinder.be.comment.repository.CommentRepository;
 import com.ajoufinder.be.user.domain.User;
 import com.ajoufinder.be.user.repository.UserRepository;
@@ -32,11 +32,11 @@ public class CommentService {
 
     /* 댓글 작성하기 */
     @Transactional
-    public CommentCreateResponse createComment(Long boardId, CommentCreateRequest request) {
+    public CommentCreateResponse createComment(User loginUser, Long boardId, CommentCreateRequest request) {
         Board board = boardRepository.findById(boardId)
             .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
 
-        User user = userRepository.findById(request.userId())
+        User user = userRepository.findById(loginUser.getId())
             .orElseThrow(() -> new EntityNotFoundException("사용자가 존재하지 않습니다."));
 
         Comment parentComment = null;
@@ -60,7 +60,7 @@ public class CommentService {
 
     /* 댓글 수정하기 */
     @Transactional
-    public CommentCreateResponse updateComment(Long boardId, Long commentId, CommentUpdateRequest request) {
+    public CommentCreateResponse updateComment(User loginUser, Long boardId, Long commentId, CommentUpdateRequest request) {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
         
@@ -72,7 +72,7 @@ public class CommentService {
             throw new RuntimeException("해당 게시글에 속한 댓글이 아닙니다.");
         }
 
-        if (!comment.getUser().getId().equals(request.userId())){
+        if (!comment.getUser().getId().equals(loginUser.getId())){
             throw new RuntimeException("댓글 작성자만 댓글을 수정할 수 있습니다.");
         }
 
@@ -84,7 +84,7 @@ public class CommentService {
 
     /* 댓글 삭제하기 */
     @Transactional
-    public void deleteComment(Long boardId, Long commentId) {
+    public void deleteComment(User loginUser, Long boardId, Long commentId) {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
 
@@ -92,10 +92,16 @@ public class CommentService {
             throw new RuntimeException("해당 게시글에 속한 댓글이 아닙니다.");
         }
 
+        if (!comment.getUser().getId().equals(loginUser.getId())){
+            throw new RuntimeException("댓글 작성자만 댓글을 수정할 수 있습니다.");
+        }
+
         comment.markAsDeleted();
     }
 
-    /* 한 게시글의 모든 댓글 리스트 조회하기 */
+    /* 한 게시글의 모든 댓글 리스트 조회하기
+     * 현재 컨트롤러에는 이 메서드를 사용하는 부분이 없습니다. 하지만 남겨는 놓았습니다.
+    */
     @Transactional(readOnly = true)
     public List<CommentResponse> getCommentsByBoard(Long boardId) {
         List<Comment> comments = commentRepository.findByBoardIdAndStatus(boardId, CommentStatus.VISIBLE);
