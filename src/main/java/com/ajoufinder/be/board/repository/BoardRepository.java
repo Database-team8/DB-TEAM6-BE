@@ -4,7 +4,6 @@ import com.ajoufinder.be.board.domain.Board;
 import com.ajoufinder.be.board.domain.constant.BoardStatus;
 import com.ajoufinder.be.board.domain.constant.Category;
 
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

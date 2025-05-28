@@ -9,15 +9,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ajoufinder.be.board.domain.constant.BoardStatus;
 import com.ajoufinder.be.board.domain.constant.Category;
-import com.ajoufinder.be.board.dto.BoardCreateRequest;
-import com.ajoufinder.be.board.dto.BoardDetailResponse;
-import com.ajoufinder.be.board.dto.BoardFilterRequest;
-import com.ajoufinder.be.board.dto.BoardSimpleResponse;
-import com.ajoufinder.be.board.dto.BoardUpdateRequest;
+import com.ajoufinder.be.board.dto.Request.BoardCreateRequest;
+import com.ajoufinder.be.board.dto.Request.BoardFilterRequest;
+import com.ajoufinder.be.board.dto.Request.BoardUpdateRequest;
+import com.ajoufinder.be.board.dto.Response.BoardDetailResponse;
+import com.ajoufinder.be.board.dto.Response.BoardSimpleResponse;
 import com.ajoufinder.be.board.service.BoardService;
 import com.ajoufinder.be.global.api_response.ApiResponse;
-
-import java.util.List;
+import com.ajoufinder.be.global.domain.UserPrincipal;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -59,8 +59,8 @@ public class BoardController {
         """
     )
     @PostMapping({"/found", "/lost"}) //게시글 종류는 프론트에서 받는 방식으로 일단 구현. 동일한 게시글 생성 메서드 사용
-    public ApiResponse<Long> createBoard(@Valid @RequestBody BoardCreateRequest request) {
-        Long boardId = boardService.createBoard(request);
+    public ApiResponse<Long> createBoard(@AuthenticationPrincipal UserPrincipal principal, @Valid @RequestBody BoardCreateRequest request) {
+        Long boardId = boardService.createBoard(principal.getUser(), request);
         return ApiResponse.onSuccess(boardId);
     }
 
@@ -82,8 +82,8 @@ public class BoardController {
             """
     )
     @PatchMapping("/{boardId}")
-    public ApiResponse<Void> updateBoard(@PathVariable("boardId") Long boardId, @Valid @RequestBody BoardUpdateRequest request) {
-        boardService.updateBoard(boardId, request);
+    public ApiResponse<Void> updateBoard(@AuthenticationPrincipal UserPrincipal principal, @PathVariable("boardId") Long boardId, @Valid @RequestBody BoardUpdateRequest request) {
+        boardService.updateBoard(principal.getUser(), boardId, request);
         return ApiResponse.onSuccess();
     }
 
@@ -124,22 +124,22 @@ public class BoardController {
 
     @Operation(summary = "게시글 상태를 ACTIVE로 변경", description = "게시글의 상태를 ACTIVE로 설정합니다.")
     @PatchMapping("/{boardId}/active")
-    public ApiResponse<Long> updateBoardStatusToActive(@PathVariable("boardId") Long boardId) {
-        Long updatedBoardId = boardService.updateBoardStatus(boardId, BoardStatus.ACTIVE);
+    public ApiResponse<Long> updateBoardStatusToActive(@AuthenticationPrincipal UserPrincipal principal, @PathVariable("boardId") Long boardId) {
+        Long updatedBoardId = boardService.updateBoardStatus(principal.getUser(), boardId, BoardStatus.ACTIVE);
         return ApiResponse.onSuccess(updatedBoardId);
     }
 
     @Operation(summary = "게시글 상태를 COMPLETED로 변경", description = "게시글의 상태를 COMPLETED로 설정합니다.")
     @PatchMapping("/{boardId}/completed")
-    public ApiResponse<Long> updateBoardStatusToCompleted(@PathVariable("boardId") Long boardId) {
-        Long updatedBoardId = boardService.updateBoardStatus(boardId, BoardStatus.COMPLETED);
+    public ApiResponse<Long> updateBoardStatusToCompleted(@AuthenticationPrincipal UserPrincipal principal, @PathVariable("boardId") Long boardId) {
+        Long updatedBoardId = boardService.updateBoardStatus(principal.getUser(), boardId, BoardStatus.COMPLETED);
         return ApiResponse.onSuccess(updatedBoardId);
     }
 
     @Operation(summary = "게시글 삭제", description = "게시글 상태를 DELETED로 변경합니다.")
     @DeleteMapping("/{boardId}")
-    public ApiResponse<Long> deleteBoard(@PathVariable("boardId") Long boardId) {
-        Long deletedBoardId = boardService.deleteBoard(boardId);
+    public ApiResponse<Long> deleteBoard(@AuthenticationPrincipal UserPrincipal principal, @PathVariable("boardId") Long boardId) {
+        Long deletedBoardId = boardService.deleteBoard(principal.getUser(), boardId);
         return ApiResponse.onSuccess(deletedBoardId);
     }
 
