@@ -1,6 +1,7 @@
 package com.ajoufinder.be.user.service;
 
 import com.ajoufinder.be.user.domain.User;
+import com.ajoufinder.be.user.dto.request.ChangePasswordRequest;
 import com.ajoufinder.be.user.dto.request.UserSignUpRequest;
 import com.ajoufinder.be.user.dto.request.UserUpdateRequest;
 import com.ajoufinder.be.user.dto.response.UserInfoResponse;
@@ -46,6 +47,18 @@ public class UserService {
 
     public UserInfoResponse getUserProfile(User user) {
         return UserInfoResponse.from(user);
+    }
+
+
+    @Transactional
+    public void changePassword(User user, ChangePasswordRequest request) {
+        if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        String newEncodedPassword = passwordEncoder.encode(request.newPassword());
+        user.changePassword(newEncodedPassword);
+        userRepository.save(user);
     }
 }
 
