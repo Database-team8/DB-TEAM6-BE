@@ -2,6 +2,7 @@ package com.ajoufinder.be.board.dto.Response;
 
 import com.ajoufinder.be.board.domain.Board;
 import com.ajoufinder.be.board.domain.constant.BoardStatus;
+import com.ajoufinder.be.board.domain.constant.Category;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -19,6 +20,7 @@ public record BoardSimpleResponse(
     @Schema(description = "게시글 ID") Long boardId,
     @Schema(description = "제목") String title,
     @Schema(description = "작성자 닉네임") String nickname,
+    @Schema(description = "게시글 종류") Category category,
     @Schema(description = "등록일") LocalDateTime createdAt,
     @Schema(description = "게시글 상태") BoardStatus status,
     @Schema(description = "게시글 이미지") String image
@@ -28,6 +30,7 @@ public record BoardSimpleResponse(
             board.getId(),
             board.getTitle(),
             board.getUser().getNickname(),
+            board.getCategory(),
             board.getCreatedAt(),
             board.getStatus(),
             board.getImage()

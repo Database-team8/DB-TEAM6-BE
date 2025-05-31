@@ -106,6 +106,14 @@ public class BoardService {
 //                 .collect(Collectors.toList());
 //     }   
 
+    /* 사용자가 작성한 게시글 조회하기 */
+    @Transactional(readOnly = true)
+    public Page<BoardSimpleResponse> getBoardsByUser(Long userId, Pageable pageable) {
+        return boardRepository.findByUserIdAndStatus(userId, BoardStatus.ACTIVE, pageable)
+            .map(BoardSimpleResponse::from);
+    }
+
+
     /* 특정 게시글의 상세 정보 조회하기 */
     public BoardDetailResponse getBoardDetail(Long boardId) {
         Board board = boardRepository.findById(boardId)

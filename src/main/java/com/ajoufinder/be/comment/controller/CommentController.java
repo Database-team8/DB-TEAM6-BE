@@ -126,7 +126,7 @@ public class CommentController {
             댓글의 대댓글: 부모 댓글의 내용
             """
     )
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user")
     public ResponseEntity<Page<CommentUserResponse>> getCommentsByUser(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(value = "page", defaultValue = "0") int page,

@@ -116,6 +116,19 @@ public class BoardController {
     //     return ApiResponse.onSuccess(boardService.getBoardsByCategory(Category.FOUND));
     // }
 
+    @Operation(summary = "특정 사용자가 작성한 게시글 조회")
+    @GetMapping("/user")
+    public ResponseEntity<Page<BoardSimpleResponse>> getBoardsByUser(
+        @AuthenticationPrincipal UserPrincipal principal,
+        @RequestParam(value = "page", defaultValue = "0") int page,
+        @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BoardSimpleResponse> result = boardService.getBoardsByUser(principal.getUser().getId(), pageable);
+        return ResponseEntity.ok(result);
+    }
+
+
     @Operation(summary = "게시글 상세 조회")
     @GetMapping("/{boardId}")
     public ApiResponse<BoardDetailResponse> getBoardDetail(@PathVariable("boardId") Long boardId) {
