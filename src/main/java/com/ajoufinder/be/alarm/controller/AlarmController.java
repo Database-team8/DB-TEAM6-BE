@@ -36,7 +36,7 @@ public class AlarmController {
 
     @Operation(
             summary = "알림 목록 조회",
-            description = "사용자에게 보내진 알림을 조회합니다. RequestParam 방식으로 userId를 전송합니다."
+            description = "로그인한 사용자에게 보내진 알림을 조회합니다."
     )
     @GetMapping()
     public List<AlarmResponse> getAlarms(@AuthenticationPrincipal UserPrincipal principal) {
