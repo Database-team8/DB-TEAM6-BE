@@ -1,16 +1,11 @@
 package com.ajoufinder.be.condition.domain;
 import com.ajoufinder.be.item_type.domain.ItemType;
+import com.ajoufinder.be.location.domain.Location;
 import com.ajoufinder.be.user.domain.User;
-import com.ajoufinder.be.board.domain.constant.Category;
 
 
-//import com.ajoufinder.be.global.domain.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-//import jakarta.persistence.EnumType;
-//import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -42,15 +37,15 @@ public class Condition{
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "category", nullable = false)
-    private Category category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_id", nullable = false)
+    private Location location;
 
 
     @Builder
-    public Condition(ItemType itemType, User user, Category category) {
+    public Condition(ItemType itemType, Location location, User user) {
         this.itemType = itemType;
+        this.location=location;
         this.user = user;
-        this.category = category;
     }
 }
