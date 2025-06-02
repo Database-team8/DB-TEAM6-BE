@@ -28,15 +28,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequiredArgsConstructor
 @RequestMapping("/alarms")
 public class AlarmController {
-    //TODO: 알림 보내기(본인 게시글에 댓글이 달렸을 때, 본인 댓글에 대댓글이 달렸을 때, 설정한 조건에 맞는 게시글이 등록되었을 때)
-    //TODO: 알림 정보 생성하기 (댓글 달렸을 때, 게시글 등록됐을 때 동적으로 생성)
-    //TODO: 
-
     private final AlarmService alarmService;
 
     @Operation(
             summary = "알림 목록 조회",
-            description = "사용자에게 보내진 알림을 조회합니다. RequestParam 방식으로 userId를 전송합니다."
+            description = "로그인한 사용자에게 보내진 알림을 조회합니다."
     )
     @GetMapping()
     public List<AlarmResponse> getAlarms(@AuthenticationPrincipal UserPrincipal principal) {

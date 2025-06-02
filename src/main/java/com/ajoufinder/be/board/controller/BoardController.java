@@ -116,6 +116,19 @@ public class BoardController {
     //     return ApiResponse.onSuccess(boardService.getBoardsByCategory(Category.FOUND));
     // }
 
+    @Operation(summary = "특정 사용자가 작성한 게시글 조회")
+    @GetMapping("/user")
+    public ResponseEntity<Page<BoardSimpleResponse>> getBoardsByUser(
+        @AuthenticationPrincipal UserPrincipal principal,
+        @RequestParam(value = "page", defaultValue = "0") int page,
+        @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BoardSimpleResponse> result = boardService.getBoardsByUser(principal.getUser().getId(), pageable);
+        return ResponseEntity.ok(result);
+    }
+
+
     @Operation(summary = "게시글 상세 조회")
     @GetMapping("/{boardId}")
     public ApiResponse<BoardDetailResponse> getBoardDetail(@PathVariable("boardId") Long boardId) {
@@ -160,15 +173,15 @@ public class BoardController {
         """
     )
     @GetMapping("/lost/filter")
-    public Page<BoardSimpleResponse> filterLostBoards(
-    @ModelAttribute BoardFilterRequest request,
-    @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    public ResponseEntity<Page<BoardSimpleResponse>> filterLostBoards(
+        @ModelAttribute BoardFilterRequest request,
+        @RequestParam(value = "page", defaultValue = "0") int page,
+        @RequestParam(value = "size", defaultValue = "10") int size
     ) {
-        return boardService.filterBoards(Category.LOST, request, pageable);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BoardSimpleResponse> result = boardService.filterBoards(Category.LOST, request, pageable);
+        return ResponseEntity.ok(result);
     }
-    // public ApiResponse<List<BoardSimpleResponse>> filterLostBoards(BoardFilterRequest request) {
-    //     return ApiResponse.onSuccess(boardService.filterBoards(Category.LOST, request));
-    // }
 
     @Operation(
         summary = "습득 게시글 필터링 조회",
@@ -186,11 +199,14 @@ public class BoardController {
             - ex3) /boards/found/filter?status=COMPLETED&itemTypeId=2
         """)
     @GetMapping("/found/filter")
-    public Page<BoardSimpleResponse> filterFoundBoards(
-    @ModelAttribute BoardFilterRequest request,
-    @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    public ResponseEntity<Page<BoardSimpleResponse>> filterFoundBoards(
+        @ModelAttribute BoardFilterRequest request,
+        @RequestParam(value = "page", defaultValue = "0") int page,
+        @RequestParam(value = "size", defaultValue = "10") int size
     ) {
-        return boardService.filterBoards(Category.FOUND, request, pageable);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BoardSimpleResponse> result = boardService.filterBoards(Category.FOUND, request, pageable);
+        return ResponseEntity.ok(result);
     }
     // public ApiResponse<List<BoardSimpleResponse>> filterFoundBoards(BoardFilterRequest request) {
     //     return ApiResponse.onSuccess(boardService.filterBoards(Category.FOUND, request));

@@ -15,5 +15,5 @@ import com.ajoufinder.be.comment.domain.constant.CommentStatus;
 public interface CommentRepository extends JpaRepository<Comment, Long>{
     List<Comment> findByBoardIdAndStatus(Long boardId, CommentStatus status);
     Page<Comment> findByBoardIdAndParentCommentIsNullAndStatus(Long boardId, CommentStatus status, Pageable pageable);
-
+    Page<Comment> findByUserId(Long userId, Pageable pageable);
 }

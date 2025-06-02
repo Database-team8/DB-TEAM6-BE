@@ -8,6 +8,7 @@ import com.ajoufinder.be.comment.dto.Request.CommentCreateRequest;
 import com.ajoufinder.be.comment.dto.Request.CommentUpdateRequest;
 import com.ajoufinder.be.comment.dto.Response.CommentCreateResponse;
 import com.ajoufinder.be.comment.dto.Response.CommentResponse;
+import com.ajoufinder.be.comment.dto.Response.CommentUserResponse;
 import com.ajoufinder.be.comment.repository.CommentRepository;
 import com.ajoufinder.be.user.domain.User;
 import com.ajoufinder.be.user.repository.UserRepository;
@@ -116,13 +117,31 @@ public class CommentService {
      * "대댓글이 아닌 댓글"을 페이지 번호, 페이지 사이즈만큼 가져옵니다.
      * 예로, 한 페이지 사이즈가 10이라면 대댓글이 아닌 댓글 10개를 가져옵니다.
      * 주의: 해당 댓글들에 달린 대댓글, 대대댓글 등 또한 함께 포함해 가져옵니다.
+     * 
+     * 로그인한 사용자와 댓글 작성자가 다르고, isSecret이 True인 댓글은 "비밀 댓글입니다." 라고 변경되어 반환됨.
     */
     @Transactional(readOnly = true)
-    public Page<CommentResponse> getParentComments(Long boardId, Pageable pageable) {
+    public Page<CommentResponse> getParentComments(User loginUser, Long boardId, Pageable pageable) {
         return commentRepository.findByBoardIdAndParentCommentIsNullAndStatus(boardId, CommentStatus.VISIBLE, pageable)
-                .map(CommentResponse::from);
+                .map(comment -> CommentResponse.from(comment, loginUser));
     }
 
+    /* [페이지 기반] 사용자별 작성한 댓글 조회하기 */
+    @Transactional(readOnly = true)
+    public Page<CommentUserResponse> getUserComments(Long userId, Pageable pageable) {
+        Page<Comment> commentPage = commentRepository.findByUserId(userId, pageable);
+        return commentPage.map(comment -> {
+            String relatedContent;
+            if (comment.getParentComment() != null) {
+                // 대댓글: 부모 댓글 내용
+                relatedContent = comment.getParentComment().getContent();
+            } else {
+                // 일반 댓글: 게시글 제목
+                relatedContent = comment.getBoard().getTitle();
+            }
 
+            return CommentUserResponse.from(comment, relatedContent);
+        });
+    }
 
 }

@@ -9,7 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,7 @@ import com.ajoufinder.be.comment.dto.Request.CommentCreateRequest;
 import com.ajoufinder.be.comment.dto.Request.CommentUpdateRequest;
 import com.ajoufinder.be.comment.dto.Response.CommentCreateResponse;
 import com.ajoufinder.be.comment.dto.Response.CommentResponse;
+import com.ajoufinder.be.comment.dto.Response.CommentUserResponse;
 import com.ajoufinder.be.comment.service.CommentService;
 import com.ajoufinder.be.global.domain.UserPrincipal;
 
@@ -32,7 +35,7 @@ import com.ajoufinder.be.global.domain.UserPrincipal;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/comments/{boardId}")
+@RequestMapping("/comments")
 public class CommentController {
     private final CommentService commentService;
 
@@ -46,7 +49,7 @@ public class CommentController {
         - parent_comment_id: (대댓글 대상) 부모 댓글 id / 대댓글이 아니라면 null
         """
     )
-    @PostMapping
+    @PostMapping("/{boardId}")
     public ResponseEntity<CommentCreateResponse> createComment(
         @AuthenticationPrincipal UserPrincipal principal,
         @PathVariable("boardId") Long boardId,
@@ -66,7 +69,7 @@ public class CommentController {
         - is_secret: 비밀댓글 여부 (T/F)
         """
     )
-    @PatchMapping("/{commentId}")
+    @PatchMapping("/{boardId}/{commentId}")
     public ResponseEntity<CommentCreateResponse> updateComment(
         @AuthenticationPrincipal UserPrincipal principal,
         @PathVariable("boardId") Long boardId,
@@ -81,7 +84,7 @@ public class CommentController {
             summary = "댓글 삭제",
             description = "댓글을 삭제합니다. 상태를 DELETED로 변경합니다."
     )
-    @DeleteMapping("/{commentId}")
+    @DeleteMapping("/{boardId}/{commentId}")
     public ResponseEntity<Void> deleteComment(
         @AuthenticationPrincipal UserPrincipal principal,
         @PathVariable("boardId") Long boardId,
@@ -93,16 +96,20 @@ public class CommentController {
 
     @Operation(
             summary = "댓글 조회",
-            description = "특정 게시글의 댓글을 조회합니다."
+            description = """
+            특정 게시글의 댓글을 조회합니다.
+            현재 로그인한 사용자와 댓글의 작성자가 다르고, isSecret 값이 True라면 댓글의 내용은 "비밀 댓글입니다."로 바뀌어 반환됩니다.
+            """
     )
-    @GetMapping()
+    @GetMapping("/{boardId}")
     public ResponseEntity<Page<CommentResponse>> getComments(
+        @AuthenticationPrincipal UserPrincipal principal,
         @PathVariable("boardId") Long boardId,
         @RequestParam(value = "page", defaultValue = "0") int page,
         @RequestParam(value = "size", defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<CommentResponse> result = commentService.getParentComments(boardId, pageable);
+        Page<CommentResponse> result = commentService.getParentComments(principal.getUser(), boardId, pageable);
         return ResponseEntity.ok(result);
     }
     // public ResponseEntity<List<CommentResponse>> getComments(@PathVariable Long boardId) {
@@ -110,4 +117,23 @@ public class CommentController {
     //     return ResponseEntity.ok(responses);
     // }
 
+    @Operation(
+            summary = "사용자별 댓글 조회",
+            description = """
+            현재 로그인한 사용자가 등록한 댓글을 조회합니다.
+            relatedContent 속성은 댓글이 등록된 요소의 내용입니다.
+            게시글의 댓글: 게시글의 제목
+            댓글의 대댓글: 부모 댓글의 내용
+            """
+    )
+    @GetMapping("/user")
+    public ResponseEntity<Page<CommentUserResponse>> getCommentsByUser(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CommentUserResponse> result = commentService.getUserComments(principal.getUser().getId(), pageable);
+        return ResponseEntity.ok(result);
+    }
 }

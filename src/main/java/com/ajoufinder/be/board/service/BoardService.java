@@ -38,27 +38,29 @@ public class BoardService {
     private final UserRepository userRepository;
     private final ItemTypeRepository itemTypeRepository;
     private final LocationRepository locationRepository;
-    //private final AlarmService alarmService; 알림 기능 구현 시 쓸 것.
+    private final AlarmService alarmService; //알림 기능 구현 시 쓸 것.
 
     /* 게시글 생성 메서드 */
     @Transactional
     public Long createBoard(User loginUser, BoardCreateRequest request) {
         User user = userRepository.findById(loginUser.getId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("유저 정보를 찾을 수 없습니다."));
 
         ItemType itemType = itemTypeRepository.findById(request.itemTypeId())
-                .orElseThrow(() -> new EntityNotFoundException("ItemType not found"));
+                .orElseThrow(() -> new EntityNotFoundException("물품 종류를 찾을 수 없습니다."));
 
         Location location = null;
         if (request.locationId() != null) {
             location = locationRepository.findById(request.locationId())
-                    .orElseThrow(() -> new EntityNotFoundException("Location not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("위치 정보를 찾을 수 없습니다."));
         }
 
         Board board = request.toEntity(user, itemType, location);
         boardRepository.save(board);
 
-        /* alarmService.notify(user, "조건에 맞는 게시글이 생성됨", board.getTitle(), "board/"+board.getId());
+        /*
+        * alarmService.notify(user, "조건에 맞는 게시글이 생성됨", board.getTitle(), "board/"+board.getId());
+        * 
         * 알림 생성 예시 코드입니다. 위 코드를 수행하기 전, 작성된 게시글에 따른 알림 대상을 뽑고,
         * 그 유저에 대해 알림을 추가하면 됩니다. 댓글 생성에서도 동일함.
         */
@@ -103,6 +105,14 @@ public class BoardService {
 //                 .map(BoardSimpleResponse::from)
 //                 .collect(Collectors.toList());
 //     }   
+
+    /* 사용자가 작성한 게시글 조회하기 */
+    @Transactional(readOnly = true)
+    public Page<BoardSimpleResponse> getBoardsByUser(Long userId, Pageable pageable) {
+        return boardRepository.findByUserIdAndStatus(userId, BoardStatus.ACTIVE, pageable)
+            .map(BoardSimpleResponse::from);
+    }
+
 
     /* 특정 게시글의 상세 정보 조회하기 */
     public BoardDetailResponse getBoardDetail(Long boardId) {

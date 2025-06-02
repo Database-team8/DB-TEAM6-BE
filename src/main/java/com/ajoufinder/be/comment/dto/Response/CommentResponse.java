@@ -2,6 +2,7 @@ package com.ajoufinder.be.comment.dto.Response;
 
 import com.ajoufinder.be.comment.domain.Comment;
 import com.ajoufinder.be.comment.domain.constant.CommentStatus;
+import com.ajoufinder.be.user.domain.User;
 import com.ajoufinder.be.user.dto.response.UserResponse;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -39,19 +40,29 @@ public record CommentResponse(
     @Schema(description = "대댓글 목록")
     List<CommentResponse> childComments
 ) {
-    public static CommentResponse from(Comment comment) {
+    /* 현재 로그인한 사용자 정보를 넘겨 비밀댓글 노출 여부를 조정한다. */
+    public static CommentResponse from(Comment comment, User loginUser) {
+        String content = comment.getContent();
+
+        if (comment.getIsSecret() && !comment.getUser().getId().equals(loginUser.getId())) {
+            content = "비밀 댓글입니다";
+        }
+
         return new CommentResponse(
             comment.getId(),
             comment.getParentComment() != null ? comment.getParentComment().getId() : null,
-            comment.getContent(),
+            content,
             comment.getIsSecret(),
             comment.getCreatedAt(),
             comment.getUpdatedAt(),
             UserResponse.from(comment.getUser()),
             comment.getChildComments().stream()
                 .filter(child -> child.getStatus() == CommentStatus.VISIBLE)
-                .map(CommentResponse::from)
+                .map(child -> CommentResponse.from(child, loginUser)) // 자식 댓글도 loginUser 기준으로 필터링
                 .collect(Collectors.toList())
         );
+    }
+    public static CommentResponse from(Comment comment) {
+        return CommentResponse.from(comment, null); // null 넘기면 loginUser 없다고 처리 가능
     }
 }
