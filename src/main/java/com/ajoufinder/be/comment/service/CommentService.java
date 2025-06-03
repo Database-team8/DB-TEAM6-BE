@@ -11,6 +11,7 @@ import com.ajoufinder.be.comment.dto.Response.CommentResponse;
 import com.ajoufinder.be.comment.dto.Response.CommentUserResponse;
 import com.ajoufinder.be.comment.repository.CommentRepository;
 import com.ajoufinder.be.user.domain.User;
+import com.ajoufinder.be.board.domain.Board;
 import com.ajoufinder.be.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,11 @@ public class CommentService {
         if (request.parentCommentId() != null) {
             parentComment = commentRepository.findById(request.parentCommentId())
                 .orElseThrow(() -> new EntityNotFoundException("부모 댓글이 존재하지 않습니다."));
+            
+            /* 부모 댓글이 현재 댓글을 달고자 하는 게시글에 있는지 확인 */
+            if (!parentComment.getBoard().getId().equals(boardId)) {
+            throw new IllegalArgumentException("부모 댓글이 현재 게시글에 속하지 않습니다.");
+        }
         }
 
         Comment comment = Comment.builder()

@@ -43,8 +43,13 @@ public record CommentResponse(
     /* 현재 로그인한 사용자 정보를 넘겨 비밀댓글 노출 여부를 조정한다. */
     public static CommentResponse from(Comment comment, User loginUser) {
         String content = comment.getContent();
+        Long boardAuthorId = comment.getBoard().getUser().getId();
+        Long commentAuthorId = comment.getUser().getId();
+        Long loginUserId = loginUser != null ? loginUser.getId() : null;
 
-        if (comment.getIsSecret() && !comment.getUser().getId().equals(loginUser.getId())) {
+        boolean isAuthorOrBoardWriter = loginUserId != null &&
+        (loginUserId.equals(commentAuthorId) || loginUserId.equals(boardAuthorId));
+        if (comment.getIsSecret() && !isAuthorOrBoardWriter) {
             content = "비밀 댓글입니다";
         }
 
