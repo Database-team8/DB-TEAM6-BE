@@ -43,9 +43,8 @@ public class CommentController {
             summary = "댓글 작성",
             description = """
         게시글 또는 다른 댓글에 새 댓글을 생성합니다. 아래 필드는 필수입니다:
-        - user_id: 댓글 작성자 id
         - content: 댓글 내용
-        - is_secret: 비밀댓글 여부 (T/F)
+        - is_secret: 비밀댓글 여부 (true / false)
         - parent_comment_id: (대댓글 대상) 부모 댓글 id / 대댓글이 아니라면 null
         """
     )
@@ -64,9 +63,8 @@ public class CommentController {
             summary = "댓글 수정",
             description = """
         댓글을 수정합니다. 생성합니다. 아래 필드는 필수입니다:
-        - user_id: 댓글 작성자 id
         - content: 댓글 내용
-        - is_secret: 비밀댓글 여부 (T/F)
+        - is_secret: 비밀댓글 여부 (true/false)
         """
     )
     @PatchMapping("/{boardId}/{commentId}")
@@ -98,7 +96,11 @@ public class CommentController {
             summary = "댓글 조회",
             description = """
             특정 게시글의 댓글을 조회합니다.
-            현재 로그인한 사용자와 댓글의 작성자가 다르고, isSecret 값이 True라면 댓글의 내용은 "비밀 댓글입니다."로 바뀌어 반환됩니다.
+            
+            1. is_secret이 true이고,
+            2. 댓글 작성자와 로그인 사용자가 다르거나,
+            3. 게시글 작성자와 로그인 사용자가 다르다면
+            댓글은 '비밀 댓글입니다.'로 치환되어 반환됩니다.
             """
     )
     @GetMapping("/{boardId}")
@@ -121,8 +123,11 @@ public class CommentController {
             summary = "사용자별 댓글 조회",
             description = """
             현재 로그인한 사용자가 등록한 댓글을 조회합니다.
-            relatedContent 속성은 댓글이 등록된 요소의 내용입니다.
+
+            related_content 속성은 댓글이 등록된 요소의 내용입니다.
+
             게시글의 댓글: 게시글의 제목
+            
             댓글의 대댓글: 부모 댓글의 내용
             """
     )

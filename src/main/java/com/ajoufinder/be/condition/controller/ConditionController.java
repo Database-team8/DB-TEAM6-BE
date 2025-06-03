@@ -30,7 +30,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConditionController {
     private final ConditionService conditionService;
 
-    @Operation( summary = "조건 생성")
+    @Operation(
+        summary = "조건 생성",
+        description = """
+        조건을 생성합니다. 다음 필드는 필수입니다:
+        - item_type_id: 조건을 적용할 물품 타입 id
+        - location_id: 조건을 적용할 위치 id
+        """
+    )
     @PostMapping
     public ApiResponse<Long> createCondition(@AuthenticationPrincipal UserPrincipal principal, @Valid @RequestBody ConditionCreateRequest request) {
         Long conditionId = conditionService.createCondition(principal.getUser(), request);

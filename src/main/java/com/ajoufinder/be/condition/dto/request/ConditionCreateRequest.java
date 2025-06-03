@@ -4,9 +4,13 @@ import com.ajoufinder.be.condition.domain.Condition;
 import com.ajoufinder.be.item_type.domain.ItemType;
 import com.ajoufinder.be.location.domain.Location;
 import com.ajoufinder.be.user.domain.User;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Schema(description = "조건 생성 요청 DTO")
 public record ConditionCreateRequest(
         @NotBlank(message = "아이템 타입을 선택해주세요.")

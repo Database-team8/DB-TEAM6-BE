@@ -7,8 +7,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ConditionResponse {
-    private Long conditionId;
-    private String itemType;
+    private Long condition_id;
+    private String item_type;
     private String location;
 
     public static ConditionResponse from(Condition condition) {

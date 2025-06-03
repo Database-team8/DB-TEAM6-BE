@@ -49,13 +49,16 @@ public class BoardController {
             summary = "분실물 게시글 생성",
             description = """
         새 분실물 게시글을 등록합니다. 다음 필드는 필수입니다:
-        - user_id: 게시글 작성자 id
         - title: 게시글 제목
         - description: 게시글 내용
-        - status: 게시글 상태 (ACTIVE, COMPLETED, DELETED)
         - category: 게시글 종류 (LOST, FOUND)
-        - itemTypeId: 분실물 종류 id
+        - item_type_id: 분실물 종류 id
         - location_id: 발견 위치 id
+
+        다음 필드는 선택적으로 입력해 주세요.
+        - detailed_location: 상세 위치
+        - related_date: 발견/습득 일시
+        - image: 이미지 url
         """
     )
     @PostMapping({"/found", "/lost"}) //게시글 종류는 프론트에서 받는 방식으로 일단 구현. 동일한 게시글 생성 메서드 사용
@@ -71,9 +74,9 @@ public class BoardController {
                 
                 [필수]
                 - title: 게시글 제목
-                - content: 게시글 본문
                 - location_id: 게시글 관련 위치 ID
                 - item_type_id: 게시글 관련 물건 종류 ID
+                - description: 게시글 본문 (상세 설명)
 
                 [선택]
                 - detailed_location: 상세 위치 정보
