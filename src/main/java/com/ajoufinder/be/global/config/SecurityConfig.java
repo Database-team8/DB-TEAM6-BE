@@ -36,7 +36,7 @@ public class SecurityConfig {
                 )
                 .formLogin(AbstractHttpConfigurer::disable) // 👉 기본 로그인 폼 사용 안 함
                 .logout(logout -> logout
-                        .logoutUrl("auth/logout")
+                        .logoutUrl("/auth/logout")
                         .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK))
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")

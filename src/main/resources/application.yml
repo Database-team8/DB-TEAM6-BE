@@ -26,3 +26,7 @@ spring:
     url: ${DB_URL_DEV}
     username: ${DB_USERNAME_DEV}
     password: ${DB_PW_DEV}
+
+springdoc:
+  swagger-ui:
+    with-credentials: true
