@@ -34,23 +34,18 @@ public class Alarm extends BaseTimeEntity {
     @Column(nullable = false, length = 500)
     private String content;
 
-    /* 새로운 컬럼 */
-    @Column(name = "related_content", nullable = true, length = 255)
-    private String relatedContent;
-
-    @Column(name = "related_url", nullable = false, length = 500)
-    private String relatedUrl;
+    @Column(name = "related_board_id", nullable = false, length = 500)
+    private Long relatedBoardId;
 
     @Column(name = "is_read", nullable = false)
     private Boolean isRead;
 
 
     @Builder
-    public Alarm(User user, String content, String relatedContent, String relatedUrl, Boolean isRead) {
+    public Alarm(User user, String content, Long relatedBoardId, Boolean isRead) {
         this.user = user;
         this.content = content;
-        this.relatedContent = relatedContent; //새로운 컬럼
-        this.relatedUrl = relatedUrl;
+        this.relatedBoardId = relatedBoardId;
         this.isRead = isRead;
     }
 

@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConditionRepository extends JpaRepository <Condition, Long> {
     List<Condition> findAllByUser(User user);
+
+    List<Condition> findByItemTypeIdAndLocationId(Long itemTypeId, Long locationId);
 }

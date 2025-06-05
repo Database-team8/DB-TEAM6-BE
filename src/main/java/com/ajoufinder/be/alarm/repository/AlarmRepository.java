@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AlarmRepository extends JpaRepository<Alarm, Long> {
     List<Alarm> findByUserOrderByCreatedAtDesc(User user);
+
+    List<Alarm> findByUserAndIsReadFalse(User user);
 }   

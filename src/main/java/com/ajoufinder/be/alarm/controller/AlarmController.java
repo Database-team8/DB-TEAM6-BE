@@ -1,5 +1,6 @@
 package com.ajoufinder.be.alarm.controller;
 
+import com.ajoufinder.be.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -7,10 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ajoufinder.be.alarm.dto.AlarmResponse;
@@ -37,5 +39,18 @@ public class AlarmController {
     @GetMapping()
     public List<AlarmResponse> getAlarms(@AuthenticationPrincipal UserPrincipal principal) {
         return alarmService.getAlarmsByUserId(principal.getUser().getId());
+    }
+
+    @PostMapping("/{alarmId}/read")
+    public ResponseEntity<Void> readAlarm(@PathVariable Long alarmId,
+                                          @AuthenticationPrincipal UserPrincipal principal) {
+        alarmService.markAsRead(alarmId, principal.getUser().getId());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/read-all")
+    public ResponseEntity<Void> readAllAlarms(@AuthenticationPrincipal UserPrincipal principal) {
+        alarmService.markAllAsRead(principal.getUser());
+        return ResponseEntity.ok().build();
     }
 }

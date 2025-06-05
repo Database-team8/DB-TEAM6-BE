@@ -1,5 +1,7 @@
 package com.ajoufinder.be.comment.service;
 
+import com.ajoufinder.be.alarm.domain.constant.AlarmTarget;
+import com.ajoufinder.be.alarm.domain.constant.AlarmType;
 import com.ajoufinder.be.board.domain.Board;
 import com.ajoufinder.be.board.repository.BoardRepository;
 import com.ajoufinder.be.comment.domain.Comment;
@@ -33,6 +35,7 @@ public class CommentService {
     private final UserRepository userRepository;
 
     /* 댓글 작성하기 */
+    @AlarmTarget(AlarmType.COMMENT_CREATED)
     @Transactional
     public CommentCreateResponse createComment(User loginUser, Long boardId, CommentCreateRequest request) {
         Board board = boardRepository.findById(boardId)

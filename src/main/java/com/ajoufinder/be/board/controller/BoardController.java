@@ -51,7 +51,6 @@ public class BoardController {
         새 분실물 게시글을 등록합니다. 다음 필드는 필수입니다:
         - title: 게시글 제목
         - description: 게시글 내용
-        - category: 게시글 종류 (LOST, FOUND)
         - item_type_id: 분실물 종류 id
         - location_id: 발견 위치 id
 
@@ -61,11 +60,29 @@ public class BoardController {
         - image: 이미지 url
         """
     )
-    @PostMapping({"/found", "/lost"}) //게시글 종류는 프론트에서 받는 방식으로 일단 구현. 동일한 게시글 생성 메서드 사용
-    public ApiResponse<Long> createBoard(@AuthenticationPrincipal UserPrincipal principal, @Valid @RequestBody BoardCreateRequest request) {
-        Long boardId = boardService.createBoard(principal.getUser(), request);
+    @PostMapping( "/lost")
+    public ApiResponse<Long> createLostBoard(@AuthenticationPrincipal UserPrincipal principal, @Valid @RequestBody BoardCreateRequest request) {
+        Long boardId = boardService.createLostBoard(principal.getUser(), request).getId();
         return ApiResponse.onSuccess(boardId);
     }
+
+    @Operation(
+            summary = "습득물 게시글 생성",
+            description = """
+        새 습득물 게시글을 등록합니다. 다음 필드는 필수입니다:
+        - user_id: 게시글 작성자 id
+        - title: 게시글 제목
+        - description: 게시글 내용
+        - item_type_id: 습득물 종류 id
+        - location_id: 발견 위치 id
+        """
+    )
+    @PostMapping( "/found")
+    public ApiResponse<Long> createFoundBoard(@AuthenticationPrincipal UserPrincipal principal, @Valid @RequestBody BoardCreateRequest request) {
+        Long boardId = boardService.createFoundBoard(principal.getUser(), request).getId();
+        return ApiResponse.onSuccess(boardId);
+    }
+
 
     @Operation(
             summary = "게시글 수정",
@@ -91,10 +108,6 @@ public class BoardController {
     }
 
     @Operation(summary = "분실 게시글 목록 조회")
-    // @GetMapping("/lost")
-    // public ApiResponse<List<BoardSimpleResponse>> getLostBoards() {
-    //     return ApiResponse.onSuccess(boardService.getBoardsByCategory(Category.LOST));
-    // }
     @GetMapping("/lost")
     public ResponseEntity<Page<BoardSimpleResponse>> getLostBoards(
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -115,9 +128,6 @@ public class BoardController {
         Page<BoardSimpleResponse> result = boardService.getBoardsByCategory(Category.FOUND, pageable);
         return ResponseEntity.ok(result);
     }
-    // public ApiResponse<List<BoardSimpleResponse>> getFoundBoards() {
-    //     return ApiResponse.onSuccess(boardService.getBoardsByCategory(Category.FOUND));
-    // }
 
     @Operation(summary = "특정 사용자가 작성한 게시글 조회")
     @GetMapping("/user")
@@ -177,7 +187,7 @@ public class BoardController {
     )
     @GetMapping("/lost/filter")
     public ResponseEntity<Page<BoardSimpleResponse>> filterLostBoards(
-        @ModelAttribute BoardFilterRequest request,
+        @RequestBody BoardFilterRequest request,
         @RequestParam(value = "page", defaultValue = "0") int page,
         @RequestParam(value = "size", defaultValue = "10") int size
     ) {
@@ -203,7 +213,7 @@ public class BoardController {
         """)
     @GetMapping("/found/filter")
     public ResponseEntity<Page<BoardSimpleResponse>> filterFoundBoards(
-        @ModelAttribute BoardFilterRequest request,
+        @RequestBody BoardFilterRequest request,
         @RequestParam(value = "page", defaultValue = "0") int page,
         @RequestParam(value = "size", defaultValue = "10") int size
     ) {
