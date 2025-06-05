@@ -1,5 +1,9 @@
 package com.ajoufinder.be.alarm.service;
 
+import static com.ajoufinder.be.global.api_response.status.ErrorStatus.UNAUTHORIZED;
+
+import com.ajoufinder.be.board.domain.Board;
+import com.ajoufinder.be.global.api_response.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,12 +27,11 @@ public class AlarmService{
     private final UserRepository userRepository;
 
     /* 알림 정보를 생성하고 저장하는 메서드 */
-    public void notify(User user, String content, String relatedContent, String relatedUrl) {
+    public void notify(User user,Long boardId, String content) {
         Alarm alarm = Alarm.builder()
                 .user(user)
                 .content(content)
-                .relatedContent(relatedContent)
-                .relatedUrl(relatedUrl)
+                .relatedBoardId(boardId)
                 .isRead(false)
                 .build();
         alarmRepository.save(alarm);
@@ -43,5 +46,24 @@ public class AlarmService{
         return alarmRepository.findByUserOrderByCreatedAtDesc(user).stream()
                 .map(AlarmResponse::from)
                 .toList();
+    }
+
+
+    @Transactional
+    public void markAsRead(Long alarmId, Long userId) {
+        Alarm alarm = alarmRepository.findById(alarmId)
+                .orElseThrow(() -> new IllegalArgumentException("알림이 존재하지 않습니다."));
+        if (!alarm.getUser().getId().equals(userId)) {
+            throw new GeneralException(UNAUTHORIZED,"본인의 알림만 읽음 처리할 수 있습니다.");
+        }
+        alarm.markAsRead();
+    }
+
+    @Transactional
+    public void markAllAsRead(User user) {
+        List<Alarm> alarms = alarmRepository.findByUserAndIsReadFalse(user);
+        for (Alarm alarm : alarms) {
+            alarm.markAsRead();
+        }
     }
 }
