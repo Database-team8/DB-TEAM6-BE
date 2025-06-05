@@ -1,5 +1,7 @@
 package com.ajoufinder.be.board.service;
 
+import com.ajoufinder.be.alarm.domain.constant.AlarmTarget;
+import com.ajoufinder.be.alarm.domain.constant.AlarmType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,11 +40,19 @@ public class BoardService {
     private final UserRepository userRepository;
     private final ItemTypeRepository itemTypeRepository;
     private final LocationRepository locationRepository;
-    private final AlarmService alarmService; //알림 기능 구현 시 쓸 것.
 
-    /* 게시글 생성 메서드 */
     @Transactional
-    public Long createBoard(User loginUser, BoardCreateRequest request) {
+    @AlarmTarget(AlarmType.FOUND_CREATED)
+    public Board createFoundBoard(User loginUser, BoardCreateRequest request) {
+        return createBoardWithCategory(loginUser, request, Category.FOUND);
+    }
+
+    @Transactional
+    public Board createLostBoard(User loginUser, BoardCreateRequest request) {
+        return createBoardWithCategory(loginUser, request, Category.LOST);
+    }
+
+    private Board createBoardWithCategory(User loginUser, BoardCreateRequest request, Category category) {
         User user = userRepository.findById(loginUser.getId())
                 .orElseThrow(() -> new EntityNotFoundException("유저 정보를 찾을 수 없습니다."));
 
@@ -55,7 +65,7 @@ public class BoardService {
                     .orElseThrow(() -> new EntityNotFoundException("위치 정보를 찾을 수 없습니다."));
         }
 
-        Board board = request.toEntity(user, itemType, location);
+        Board board = request.toEntity(user, itemType, location, category);
         boardRepository.save(board);
 
         /*
@@ -64,7 +74,7 @@ public class BoardService {
         * 알림 생성 예시 코드입니다. 위 코드를 수행하기 전, 작성된 게시글에 따른 알림 대상을 뽑고,
         * 그 유저에 대해 알림을 추가하면 됩니다. 댓글 생성에서도 동일함.
         */
-        return board.getId();
+        return board;
     }
 
     /* 게시글 수정 메서드 */
@@ -100,11 +110,6 @@ public class BoardService {
         return boardRepository.findByCategoryAndStatus(category, BoardStatus.ACTIVE, pageable)
                 .map(BoardSimpleResponse::from);
     }
-//     public List<BoardSimpleResponse> getBoardsByCategory(Category category) {
-//         return boardRepository.findByCategory(category).stream()
-//                 .map(BoardSimpleResponse::from)
-//                 .collect(Collectors.toList());
-//     }   
 
     /* 사용자가 작성한 게시글 조회하기 */
     @Transactional(readOnly = true)
@@ -119,7 +124,7 @@ public class BoardService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("Board not found."));
 
-        if (!board.getStatus().equals(BoardStatus.DELETED)) {
+        if (board.getStatus().equals(BoardStatus.DELETED)) {
             throw new RuntimeException("삭제된 게시글은 조회할 수 없습니다.");
         }
 
@@ -171,22 +176,5 @@ public class BoardService {
 
         return boardPage.map(BoardSimpleResponse::from);
     }
-        
-
-//     @Transactional(readOnly = true)
-//     public List<BoardSimpleResponse> filterBoards(Category category, BoardFilterRequest request) {
-//         List<Board> boards = boardRepository.findAllByDynamicFilter(
-//                 category,
-//                 request.status(),
-//                 request.itemTypeId(),
-//                 request.locationId(),
-//                 request.startDate(),
-//                 request.endDate()
-//         );
-
-//         return boards.stream()
-//                 .map(BoardSimpleResponse::from)
-//                 .toList();
-//     }
         
 }
