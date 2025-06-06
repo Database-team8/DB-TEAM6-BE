@@ -8,6 +8,9 @@ import lombok.Builder;
 @Schema(description = "내 정보 응답 DTO")
 public record UserInfoResponse(
 
+        @Schema(description = "유저ID", example = "1")
+        Long userId,
+
         @Schema(description = "프로필 이미지 URL", example = "https://cdn.example.com/profile.jpg")
         String profileImage,
 
@@ -26,6 +29,7 @@ public record UserInfoResponse(
 ) {
         public static UserInfoResponse from(User user){
                 return UserInfoResponse.builder()
+                        .userId(user.getId())
                         .profileImage(user.getProfileImage())
                         .name(user.getName())
                         .nickname(user.getNickname())
