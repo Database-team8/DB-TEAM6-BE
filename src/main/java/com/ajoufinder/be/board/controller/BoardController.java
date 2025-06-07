@@ -187,7 +187,7 @@ public class BoardController {
     )
     @GetMapping("/lost/filter")
     public ResponseEntity<Page<BoardSimpleResponse>> filterLostBoards(
-        @RequestBody BoardFilterRequest request,
+        @ModelAttribute BoardFilterRequest request,
         @RequestParam(value = "page", defaultValue = "0") int page,
         @RequestParam(value = "size", defaultValue = "10") int size
     ) {
@@ -213,7 +213,7 @@ public class BoardController {
         """)
     @GetMapping("/found/filter")
     public ResponseEntity<Page<BoardSimpleResponse>> filterFoundBoards(
-        @RequestBody BoardFilterRequest request,
+        @ModelAttribute BoardFilterRequest request,
         @RequestParam(value = "page", defaultValue = "0") int page,
         @RequestParam(value = "size", defaultValue = "10") int size
     ) {

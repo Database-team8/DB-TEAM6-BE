@@ -86,8 +86,7 @@ public class BoardService {
     public Long updateBoard(User loginUser, Long boardId, BoardUpdateRequest request) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
-
-        if(!board.getUser().equals(loginUser)){
+        if(!board.getUser().getId().equals(loginUser.getId())){
             throw new RuntimeException("게시글 수정은 게시글의 작성자만 할 수 있습니다.");
         }
 
